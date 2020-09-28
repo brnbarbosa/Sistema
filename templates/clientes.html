@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Clientes
+{% endblock %}
+
+{% block main %}
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <h1 class='h2'>Clientes</h1>
+        <hr>
+        <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+            <form action='clientes' method='POST'>
+                <div class='form-group'>
+                    <label for=''>Cadastrar</label>
+                    <input name='nome' autofocus class='form-control' placeholder='Nome' type='text'>
+                    <input name='cep' autofocus class='form-control' placeholder='CEP' type='number'>
+                    <input name='endereco' autofocus class='form-control' placeholder='Endereço' type='text'>
+                    <input name='cnpj' autofocus class='form-control' placeholder='CNPJ' type='text'>
+                </div>
+                <button type='submit' class='btn btn-sm btn-outline-secondary'>Cadastrar</button>
+            </form>
+        </div>
+        
+    </div>
+    <div class='table-responsive'>
+        <table class='table table-striped table-sm'>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CEP</th>
+                    <th>Endereço</th>
+                    <th>CNPJ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row['id'] }}</td>
+                        <td>{{ row['nome'] }}</td>
+                        <td>{{ row['cep'] }}</td>
+                        <td>{{ row['endereço'] }}</td>
+                        <td>{{ row['cnpj'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

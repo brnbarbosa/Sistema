@@ -1,0 +1,38 @@
+To do:
+Select SQLserver;
+Create database;
+    Users;
+        [id, nome, senha]
+    Clientes;
+        [id, nome, cnpj, cep, endereço]
+    Sacados;
+        [id, nome, cnpj, cep, endereço]
+    Títulos;
+        [cliente_id, sacados_id, nf, valor, vencimento, borderô, data negociação, status(aberto, quitado, vencido)]
+SQL Querys;
+    Relatórios;
+        [títulos em aberto, títulos quitados, títulos vencidos, títulos por cliente, títulos por sacado]
+    Lista de Clientes;
+        [consulta, inclusão]
+    Lista de Sacados;
+        [consulta, inclusão]
+    Títulos;
+        [consulta, alterar]
+Borderô
+    Lançar títulos
+
+HTML
+Login;
+Main;
+    Menu;
+        Operação;
+            [borderô]
+        Clientes;
+            [consulta, inclusão]
+        Sacados;
+            [consulta, inclusão]
+        Relatórios;
+        Títulos;
+            [baixar, prorrogar]
+
+    
