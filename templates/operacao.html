@@ -5,10 +5,9 @@
 {% endblock %}
 
 {% block main %} 
-</div>
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
         <h1 class='h2'>Operação</h1>
-        <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <div>
             <form action='operacao' method='POST'>
                 <div class='form-group'>
                     <label for=''>Lançar</label>
@@ -46,34 +45,42 @@
             </form>
             <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
                 <form action='bordero' method='POST'>
-                    <button type='submit' class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
+                    <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
                 </form>
             </div>
         </div>
         
     </div>
-    <div class='table-responsive'>
-        <table class='table table-striped table-sm'>
-            <thead>
-                <tr>
-                    <th>Sacado</th>
-                    <th>Título</th>
-                    <th>Valor</th>
-                    <th>Vencimento</th>
-                    <th>Tipo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in bordero %}
+    <!--BORDERO PRESENTATION-->
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
+        <h1 class='h2'>BORDERO</h1>
+        <p>Valor total: {{ total[0]['SUM(valor)'] }}</p>
+        <p>Fator: ({{ fator[0]['SUM(taxa)'] }})</p>
+        <p>Tarifas: ({{ tarifas }})</p>
+        <hr>
+        <p>Líquido: {{ liquido }}</p>
+        <div class='table-responsive'>
+            <table class='table table-striped table-sm'>
+                <thead>
                     <tr>
-                        <td>{{ row['sacado'] }}</td>
-                        <td>{{ row['titulo'] }}</td>
-                        <td>{{ row['valor'] }}</td>
-                        <td>{{ row['vencimento'] }}</td>
-                        <td>{{ row['tipo'] }}</td>
+                        <th>Sacado</th>
+                        <th>Título</th>
+                        <th>Valor</th>
+                        <th>Vencimento</th>
+                        <th>Tipo</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    {% for row in bordero %}
+                        <tr>
+                            <td>{{ row['sacado'] }}</td>
+                            <td>{{ row['titulo'] }}</td>
+                            <td>{{ row['valor'] }}</td>
+                            <td>{{ row['vencimento'] }}</td>
+                            <td>{{ row['tipo'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 {% endblock %}

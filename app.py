@@ -129,10 +129,21 @@ def operacao():
     bordero = cur.execute('SELECT * FROM bordero') 
     bordero = cur.fetchall()
 
+    cur.execute('SELECT SUM(valor) FROM bordero')
+    total = cur.fetchall()
+    
+    # TODO FATOR USE HELPER.PY
+    cur.execute('SELECT SUM(taxa) FROM bordero')
+    fator = cur.fetchall()
+
+    cur.execute('SELECT SUM(titulo) FROM bordero')
+    n_tit = cur.fetchall()
+    tarifas = 10 + (n_tit[0]['SUM(titulo)'] * 5) 
+
     # GET
     if request.method == 'GET':
-        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=bordero)
-
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=bordero, total=total, fator=fator, tarifas=tarifas, liquido=liquido)
+    
     # POST
     else:
 
@@ -155,25 +166,13 @@ def operacao():
 
         con.commit()
 
-        return redirect('/operacao')
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=bordero, total=total, fator=fator, tarifas=tarifas, liquido=liquido)
+        
 
 @app.route('/bordero', methods=['GET', 'POST'])
 @login_required
 def bordero():
-
-    # connect database
-    con = sqlite3.connect('brn.db')
-    con.row_factory = sqlite3.Row
-
-    # create a cursor
-    cur = con.cursor()
-
     return redirect('/')
-
-       
-
-
-    
 
 @app.route('/relatorios', methods=['GET', 'POST'])
 @login_required
