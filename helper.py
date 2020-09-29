@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-from datetime import date
+from datetime import datetime, date
 
 def login_required(f):
     # decorator to check login
@@ -12,14 +12,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def dias(vencimento):
-    return (date.today() - vencimento)
 
 def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
 
-def fator(taxa, dias):
-    return ((taxa/30) * dias)
-
-def liquido(fator, valor):
-    return (valor * fator)
+def lqd(vencimento, taxa, valor):
+    dias = (vencimento - date.today()).days
+    fator = ((taxa/30) * dias)/100
+    liquido = valor - (fator * valor)
+    return float(liquido)

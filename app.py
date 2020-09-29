@@ -1,6 +1,6 @@
 from cs50 import SQL
 import sqlite3
-from datetime import date
+from datetime import datetime, date
 
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, current_app
 from flask_session import Session
@@ -12,7 +12,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # side script for support
-from helper import login_required, dias, prazo_medio, fator, liquido
+from helper import login_required, prazo_medio, lqd
 
 app = Flask(__name__)
 
@@ -140,13 +140,18 @@ def operacao():
         nm_cliente = request.form.get('cliente')
         nm_sacado = request.form.get('sacado')
         titulo = request.form.get('titulo')
-        valor = request.form.get('valor')
-        vencimento = request.form.get('vencimento')
-        tipo = request.form.get('tipo')
+        valor = float(request.form.get('valor'))
+        
+        venc = datetime.strptime(request.form.get('vencimento'), '%Y-%m-%d')
+        vencimento = date(venc.year, venc.month, venc.day)
 
-              
-        cur.execute('INSERT INTO bordero (cliente, sacado, titulo, valor, vencimento, dt_nego, tipo) VALUES (?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, vencimento, date.today(), tipo))
+        tipo = request.form.get('tipo')
+        taxa = float(request.form.get('tx'))
+
+        liquido = float(lqd(vencimento, taxa, valor))
+ 
+        cur.execute('INSERT INTO bordero (cliente, sacado, titulo, valor, vencimento, dt_nego, tipo, taxa, lqd) VALUES (?,?,?,?,?,?,?,?,?)', 
+                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, liquido))
 
         con.commit()
 
@@ -163,9 +168,9 @@ def bordero():
     # create a cursor
     cur = con.cursor()
 
-    total = cur.execute('SELECT SUM(valor) FROM bordero')
-    n_titulo = cur.execute('SELECT SUM(titulo) FROM bordero')
-    
+    return redirect('/')
+
+       
 
 
     
