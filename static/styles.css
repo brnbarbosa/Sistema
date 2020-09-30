@@ -48,10 +48,14 @@ main img
 }
 
 /* ---------- NAV -------------------*/
+
+
+
 body {
     font-size: .875rem;
+    height:100%;
   }
-  
+
   .feather {
     width: 16px;
     height: 16px;

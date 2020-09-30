@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+    <html lang="pt-br">
+        <head>
+            <!--Define meta-->
+            <meta charset="UTF-8">
+            <meta name="description" content="BRN System">
+            <meta name="keywords" content="Finance, Factoring">
+            <meta name="author" content="Bruno Barbosa">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <!--BootStrap-->
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">             
+            
+            <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+            <link href="/static/styles.css" rel="stylesheet"> 
+
+            <style>
+                .bd-placeholder-img {
+                  font-size: 1.125rem;
+                  text-anchor: middle;
+                  -webkit-user-select: none;
+                  -moz-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
+                }
+          
+                @media (min-width: 768px) {
+                  .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                  }
+                }
+              </style>
+
+              <script>
+                  function printDiv(divName) {
+                    var printContents = document.getElementById(divName).innerHTML;
+                    var originalContents = document.body.innerHTML;
+
+                    document.body.innerHTML = printContents;
+
+                    window.print();
+
+                    document.body.innerHTML = originalContents;
+                }
+              </script>
+
+            <title>
+                Table
+            </title>
+        </head>
+        <body>
+            <!--BORDERO PRESENTATION-->
+            <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
+                <div class='table-responsive'>
+                    <table class='table table-striped table-sm'>
+                        <thead>
+                            <tr>
+                                <th>Sacado</th>
+                                <th>Título</th>
+                                <th>Valor</th>
+                                <th>Vencimento</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in borderos %}
+                                <tr>
+                                    <td>{{ row['sacado'] }}</td>
+                                    <td>{{ row['titulo'] }}</td>
+                                    <td>{{ row['valor'] }}</td>
+                                    <td>{{ row['vencimento'] }}</td>
+                                    <td>{{ row['tipo'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+    </html>

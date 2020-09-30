@@ -137,32 +137,59 @@ def operacao():
     else:
 
         # get all user inputs
+        # name of cliente
         nm_cliente = request.form.get('cliente')
+
+        # name of sacado
         nm_sacado = request.form.get('sacado')
+
+        # titulo number
         titulo = request.form.get('titulo')
+
+        # valor
         valor = float(request.form.get('valor'))
         
+        # vencimento and calculating total days between today and vencimento date
         venc = datetime.strptime(request.form.get('vencimento'), '%Y-%m-%d')
         vencimento = date(venc.year, venc.month, venc.day)
         dias = day(vencimento)
 
+        # tipo (cheque or duplicata)
         tipo = request.form.get('tipo')
+
+        # taxa float value
         taxa = float(request.form.get('tx'))
 
+        # fator TODO juros compostos
         fator = factor(taxa, dias)
 
+        # liquido of operation
         liquido = float(lqd(fator, valor))
  
+        # insert all that information in a support table
         cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido) VALUES (?,?,?,?,?,?,?,?,?,?)', 
                     (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, fator, liquido))
 
         con.commit()
 
-        borderos = cur.execute('SELECT * FROM borderos') 
-        borderos = cur.fetchall()
-
         return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
         
+@app.route('/table', methods=['GET'])
+@login_required
+def table():
+
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.fetchall()
+
+    return render_template('/table.html', borderos=borderos)
+
 
 @app.route('/bordero', methods=['GET', 'POST'])
 @login_required

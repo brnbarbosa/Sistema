@@ -16,16 +16,17 @@
                         <select class="form-control" name="cliente">
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
-                            <option value={{ row['nome'] }}>{{ row['nome'] }}</option>
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>
+                        <input name='tx' autofocus class='form-control' placeholder='Taxa' type='number' step='0.01'>
                     </div>
                     <!--Selection - Sacado-->
                     <div class="form-group">
                         <select class="form-control" name="sacado">
                             <option disabled selected value>Sacado</option>
                         {% for row in sacado %}
-                            <option value={{ row['nome'] }}>{{ row['nome'] }}</option>
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>
                     </div>
@@ -33,7 +34,6 @@
                         <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
                         <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
                         <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
-                        <input name='tx' autofocus class='form-control' placeholder='Taxa' type='number' step='0.01'>
                         <select class='form-control' name='tipo'>
                             <option disabled select value>Tipo</option>
                             <option value='cheque'>Cheque</option>
@@ -45,36 +45,12 @@
             </form>
             <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
                 <form action='bordero' method='POST'>
-                    <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
+                    <button type="submit" class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
                 </form>
             </div>
         </div>
-        
     </div>
-    <!--BORDERO PRESENTATION-->
-    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
-        <div class='table-responsive'>
-            <table class='table table-striped table-sm'>
-                <thead>
-                    <tr>
-                        <th>Sacado</th>
-                        <th>Título</th>
-                        <th>Valor</th>
-                        <th>Vencimento</th>
-                        <th>Tipo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in borderos %}
-                        <tr>
-                            <td>{{ row['sacado'] }}</td>
-                            <td>{{ row['titulo'] }}</td>
-                            <td>{{ row['valor'] }}</td>
-                            <td>{{ row['vencimento'] }}</td>
-                            <td>{{ row['tipo'] }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class='-frame'>
+        <iframe style="width:100%; min-height:500px;height:65%" marginwidth="0" marginheight="0" src='table' title='table' frameborder="0" noresize scrolling="auto"></iframe>
+    </div>
 {% endblock %}
