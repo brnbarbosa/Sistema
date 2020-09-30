@@ -5,26 +5,23 @@
 {% endblock %}
 
 {% block main %} 
-</div>
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <form action='bordero' method='POST'>
+            <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button>                   
+        </form>
+        <form action='operacao' method='POST'>
+            <button type='submit' class='btn btn-sm btn-outline-secondary'>Voltar</button>                   
+        </form>
+    </div>
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
         <h1 class='h2'>Bordero</h1>
         <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
-            <h2>Total: {{ total }}</h2>
-            <h2>Nº Títulos: {{ n_titulos }}</h2>
-            <h2>Prazo Médio: {{ p_medio }}</h2>
-            <h2>Fator: {{ fator }}</h2>
-            <h2>Líquido: {{ liquido }}</h2>
-            </form>
-            <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
-                <form action='bordero' method='POST'>
-                    <button type='submit' class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
-                </form>
-                <form action='operacao' method='POST'>
-                    <button type='submit' class='btn btn-sm btn-outline-secondary'>Voltar</button>                   
-                </form>
-            </div>
+            <p>Total: {{ total }}</p>
+            <p>Nº Títulos: {{ n_titulos }}</p>
+            <p>Prazo Médio: {{ p_medio }}</p>
+            <p>Fator: {{ fator }}</p>
+            <p>Líquido: {{ liquido }}</p>           
         </div>
-        
     </div>
     <div class='table-responsive'>
         <table class='table table-striped table-sm'>

@@ -31,7 +31,7 @@
                     </div>
                     <div class='form-goup'>
                         <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
-                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01'>
+                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
                         <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
                         <input name='tx' autofocus class='form-control' placeholder='Taxa' type='number' step='0.01'>
                         <select class='form-control' name='tipo'>
@@ -53,12 +53,6 @@
     </div>
     <!--BORDERO PRESENTATION-->
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
-        <h1 class='h2'>BORDERO</h1>
-        <p>Valor total: {{ total[0]['SUM(valor)'] }}</p>
-        <p>Fator: ({{ fator[0]['SUM(taxa)'] }})</p>
-        <p>Tarifas: ({{ tarifas }})</p>
-        <hr>
-        <p>Líquido: {{ liquido }}</p>
         <div class='table-responsive'>
             <table class='table table-striped table-sm'>
                 <thead>
@@ -71,7 +65,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in bordero %}
+                    {% for row in borderos %}
                         <tr>
                             <td>{{ row['sacado'] }}</td>
                             <td>{{ row['titulo'] }}</td>

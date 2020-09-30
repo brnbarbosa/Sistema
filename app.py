@@ -12,7 +12,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # side script for support
-from helper import login_required, prazo_medio, lqd
+from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
@@ -126,23 +126,12 @@ def operacao():
     sacado = cur.execute('SELECT nome FROM sacados')
     sacado = cur.fetchall()
 
-    bordero = cur.execute('SELECT * FROM bordero') 
-    bordero = cur.fetchall()
-
-    cur.execute('SELECT SUM(valor) FROM bordero')
-    total = cur.fetchall()
-    
-    # TODO FATOR USE HELPER.PY
-    cur.execute('SELECT SUM(taxa) FROM bordero')
-    fator = cur.fetchall()
-
-    cur.execute('SELECT SUM(titulo) FROM bordero')
-    n_tit = cur.fetchall()
-    tarifas = 10 + (n_tit[0]['SUM(titulo)'] * 5) 
+    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.fetchall()
 
     # GET
     if request.method == 'GET':
-        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=bordero, total=total, fator=fator, tarifas=tarifas, liquido=liquido)
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
     
     # POST
     else:
@@ -155,18 +144,24 @@ def operacao():
         
         venc = datetime.strptime(request.form.get('vencimento'), '%Y-%m-%d')
         vencimento = date(venc.year, venc.month, venc.day)
+        dias = day(vencimento)
 
         tipo = request.form.get('tipo')
         taxa = float(request.form.get('tx'))
 
-        liquido = float(lqd(vencimento, taxa, valor))
+        fator = factor(taxa, dias)
+
+        liquido = float(lqd(fator, valor))
  
-        cur.execute('INSERT INTO bordero (cliente, sacado, titulo, valor, vencimento, dt_nego, tipo, taxa, lqd) VALUES (?,?,?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, liquido))
+        cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido) VALUES (?,?,?,?,?,?,?,?,?,?)', 
+                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, fator, liquido))
 
         con.commit()
 
-        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=bordero, total=total, fator=fator, tarifas=tarifas, liquido=liquido)
+        borderos = cur.execute('SELECT * FROM borderos') 
+        borderos = cur.fetchall()
+
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
         
 
 @app.route('/bordero', methods=['GET', 'POST'])

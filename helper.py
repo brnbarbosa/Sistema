@@ -12,12 +12,16 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def day(vencimento):
+    # TODO IMPLEMENTAR DIAS DA SEMANA
+    return ((vencimento - date.today()).days + 1)
 
 def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
 
-def lqd(vencimento, taxa, valor):
-    dias = (vencimento - date.today()).days
-    fator = ((taxa/30) * dias)/100
+def factor(taxa, dias):
+    return ((taxa/30) * dias)/100
+
+def lqd(fator, valor):
     liquido = valor - (fator * valor)
     return float(liquido)
