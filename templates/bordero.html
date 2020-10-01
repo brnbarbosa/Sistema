@@ -16,14 +16,14 @@
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom' id='print'>
         <h1 class='h2'>Bordero</h1>
         <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
-            <p>Total: {{ total }}</p>
-            <p>Nº Títulos: {{ n_titulos }}</p>
-            <p>Prazo Médio: {{ p_medio }}</p>
+            <p>Total dos títulos: R$ {{ total[0]["SUM(valor)"] }}</p>
+            <p>Nº Títulos: {{ n_titulos[0] }}</p>
+            <!--<p>Prazo Médio: {{ p_medio }}</p>
             <p>Fator: {{ fator }}</p>
-            <p>Líquido: {{ liquido }}</p>           
+            <p>Líquido: {{ liquido }}</p>-->          
         </div>
     </div>
-    <div class='table-responsive'>
+    <div class='table-responsive' id='print'>
         <table class='table table-striped table-sm'>
             <thead>
                 <tr>
@@ -35,7 +35,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in bordero %}
+                {% for row in borderos %}
                     <tr>
                         <td>{{ row['sacado'] }}</td>
                         <td>{{ row['titulo'] }}</td>

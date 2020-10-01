@@ -194,7 +194,29 @@ def table():
 @app.route('/bordero', methods=['GET', 'POST'])
 @login_required
 def bordero():
-    return redirect('/')
+
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.fetchall()
+
+    total = cur.execute('SELECT SUM(valor) FROM borderos')
+    total = cur.fetchall()
+
+    n_titulos = cur.execute('SELECT COUNT(*) FROM borderos')
+    n_titulos = cur.fetchall()
+
+    if request.method == 'GET':
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos)
+    else:
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos)
+    
+
 
 @app.route('/relatorios', methods=['GET', 'POST'])
 @login_required
