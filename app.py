@@ -160,15 +160,15 @@ def operacao():
         # taxa float value
         taxa = float(request.form.get('tx'))
 
-        # fator TODO juros compostos
+        # fator TODO juros compostos <<<<<_____________________-----------------------------------_______>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!
         fator = factor(taxa, dias)
 
         # liquido of operation
         liquido = float(lqd(fator, valor))
  
         # insert all that information in a support table
-        cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido) VALUES (?,?,?,?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, fator, liquido))
+        cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
+                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, fator, liquido, dias))
 
         con.commit()
 
@@ -210,11 +210,16 @@ def bordero():
 
     n_titulos = cur.execute('SELECT COUNT(*) FROM borderos')
     n_titulos = cur.fetchall()
+    
+    dias = cur.execute('SELECT SUM(prazo) FROM borderos')
+    dias = cur.fetchall()
+
+    p_medio = prazo_medio(n_titulos[0]["COUNT(*)"], dias[0]["SUM(prazo)"])
 
     if request.method == 'GET':
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos)
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio)
     else:
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos)
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio)
     
 
 

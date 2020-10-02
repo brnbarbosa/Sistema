@@ -17,7 +17,7 @@
         <h1 class='h2'>Bordero</h1>
         <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
             <p>Total dos títulos: R$ {{ total[0]["SUM(valor)"] }}</p>
-            <p>Nº Títulos: {{ n_titulos[0] }}</p>
+            <p>Nº Títulos: {{ n_titulos[0]["COUNT(*)"] }}</p>
             <!--<p>Prazo Médio: {{ p_medio }}</p>
             <p>Fator: {{ fator }}</p>
             <p>Líquido: {{ liquido }}</p>-->          
