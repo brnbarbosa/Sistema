@@ -129,9 +129,11 @@ def operacao():
     borderos = cur.execute('SELECT * FROM borderos') 
     borderos = cur.fetchall()
 
+    incluir = False
+
     # GET
     if request.method == 'GET':
-        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos, incluir=incluir)
     
     # POST
     else:
@@ -160,6 +162,11 @@ def operacao():
         # taxa float value
         taxa = float(request.form.get('tx'))
 
+        if taxa > 0.00 and valor > 0.00:
+            incluir = True
+        else:
+            incluir = False
+
         # fator TODO juros compostos <<<<<_____________________-----------------------------------_______>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!
         fator = factor(taxa, dias)
 
@@ -172,7 +179,7 @@ def operacao():
 
         con.commit()
 
-        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
+        return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos, incluir=incluir)
         
 @app.route('/table', methods=['GET'])
 @login_required

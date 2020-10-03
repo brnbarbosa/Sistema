@@ -5,16 +5,17 @@
 {% endblock %}
 
 {% block main %}
+<div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
     <form action='login' method='POST'>
         <div class='form-group'>
             <label>Usuário: </label>
-            <input name='user' autofocus class='form-control' placeholder='Usuário' type='text'>
+            <input name='user' autofocus class='form-control-dark' placeholder='Usuário' type='text'>
         </div>
         <div class='form-goup'>
             <label>Senha: </label>
-            <input name='password' autofocus class='form-control' placeholder='Senha' type='password'>
+            <input name='password' autofocus class='form-control-dark' placeholder='Senha' type='password'>
         </div>
-        <button class="btn btn-primary" type='submit'>Log in</button>
+        <button class="btn btn-sm btn-outline-secondary" type='submit'>Log in</button>
     </form>
-    <h1>Sistema</h1>
+</div>
 {% endblock %}
