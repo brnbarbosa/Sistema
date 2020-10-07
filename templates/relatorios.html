@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Relatórios
+{% endblock %}
+
+{% block main %} 
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <h1 class='h2'>Relatórios</h1>
+            <form action='relatorios' method='POST'>
+                <div class='form-group'>
+                    <label for=''>Pesquisar</label>
+                    <!--Selection - Cliente-->
+                    <div class="form-group">
+                        <select class="form-control" name="cliente">
+                            <option disabled selected value>Cliente</option>
+                        {% for row in cliente %}
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
+                        {% endfor %}
+                        </select>   
+                    </div>
+                    <!--Selection - Sacado-->
+                    <div class="form-group">
+                        <select class="form-control" name="sacado">
+                            <option disabled selected value>Sacado</option>
+                        {% for row in sacado %}
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <div class='form-goup'>
+                        <select class='form-control' name='tipo'>
+                            <option select value>Tipo</option>
+                            <option value='cheque'>Cheque</option>
+                            <option value='duplicata'>Duplicata</option>
+                        </select>
+                    </div>
+                    <div class='form-goup'>
+                        <select class='form-control' name='status'>
+                            <option select value>Status</option>
+                            <option value='Em Aberto'>Em Aberto</option>
+                            <option value='Vencido'>Vencido</option>
+                            <option value='Quitado'>Quitado</option>
+                        </select>
+                    </div>
+                    <div class='form-goup'>
+                        <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
+                        <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
+                    </div>
+                    <button type='submit' class='btn btn-sm btn-outline-secondary'>Procurar</button>
+                </div>
+            </form>
+            <p>{{ sql }}</p>
+            {% for key in inputs %}
+                <p>{{ key }}</p>
+            {% endfor %}
+
+    </div>
+    <!--<div class='-frame'>
+        <iframe style="width:100%; min-height:500px;height:65%" marginwidth="0" marginheight="0" src='answer' title='table' frameborder="0" noresize scrolling="auto"></iframe>
+    </div>-->
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <div class='table-responsive'>
+            <table class='table table-striped table-sm'>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Sacado</th>
+                        <th>Título</th>
+                        <th>Valor</th>
+                        <th>Vencimento</th>
+                        <th>Tipo</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in titulo %}
+                        <tr>
+                            <td>{{ row['cliente_id'] }}</td>
+                            <td>{{ row['sacado'] }}</td>
+                            <td>{{ row['titulo'] }}</td>
+                            <td>{{ row['valor'] }}</td>
+                            <td>{{ row['vencimento'] }}</td>
+                            <td>{{ row['tipo'] }}</td>
+                            <td>{{ row['status'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+{% endblock %}

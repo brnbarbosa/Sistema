@@ -161,8 +161,8 @@ def operacao():
         # taxa float value
         taxa = float(request.form.get('tx'))
 
-        # fator TODO juros compostos <<<<<_____________________-----------------------------------_______>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!
-        fator = factor(taxa, dias)
+        # factor
+        fator = factor(taxa, dias, valor)
 
         # liquido of operation
         liquido = float(lqd(fator, valor))
@@ -217,18 +217,115 @@ def bordero():
 
     p_medio = prazo_medio(n_titulos[0]["COUNT(*)"], dias[0]["SUM(prazo)"])
 
+    fator = cur.execute('SELECT SUM(fator) FROM borderos')
+    fator = cur.fetchall()
+
+    li = cur.execute('SELECT SUM(liquido) FROM borderos')
+    li = cur.fetchall()
+
+    # insert all data in Titulos
+    for row in borderos:
+        cId = cur.execute('SELECT id FROM clientes WHERE nome = (SELECT cliente FROM borderos WHERE cliente = ?)', (row['cliente'],))
+        cId = cur. fetchall()
+
+        sId = cur.execute('SELECT id FROM sacados WHERE nome = (SELECT sacado FROM borderos WHERE sacado = ?)', (row['sacado'],))
+        sId = cur.fetchall()
+
+        cur.execute("INSERT INTO titulo (cliente_id, sacado_id, titulo, vencimento, valor, dt_negoc, tipo, status) VALUES (?,?,?,?,?,?,?,?)",
+                    (cId[0]['id'], sId[0]['id'], row['titulo'], row['vencimento'], row['valor'], row['dt_negoc'], row['tipo'], "Em Aberto"))
+
+        con.commit()
+
     if request.method == 'GET':
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio)
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=li)
     else:
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio)
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=li)
+
+@app.route('/encerrar', methods=['POST'])
+@login_required
+def encerrar():
+
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    cur.execute('DELETE FROM borderos')
+
+    con.commit()
+    con.close()
     
+    return redirect('/')
+
 
 
 @app.route('/relatorios', methods=['GET', 'POST'])
 @login_required
 def relatorios():
-    return redirect('/')
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
 
+    # create a cursor
+    cur = con.cursor()
+
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.fetchall()
+
+    # query sacados table to list all sacados
+    sacado = cur.execute('SELECT nome FROM sacados')
+    sacado = cur.fetchall()
+
+    # query títulos table 
+    tit = cur.execute('SELECT * FROM titulo')
+    tit = cur.fetchall()
+
+    # GET
+    if request.method == "GET":
+        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=tit)
+
+    # POST
+    else:
+
+        inputs = {
+                "cliente_id": None,
+                "sacado_id": None,
+                "tipo": request.form.get('tipo'),
+                "status": request.form.get('status'),
+                "titulo": request.form.get('titulo'),
+                "vencimento": request.form.get('vencimento')
+        }
+
+        # get all user inputs
+        nm_cli = request.form.get('cliente')
+        if nm_cli != None:
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
+            cID = cur.fetchall()
+            inputs['cliente_id'] = cID[0]['id']
+
+        nm_sac = request.form.get('sacado')
+        if nm_sac != None:
+            sID = cur.execute('SELECT id FROM sacados WHERE nome = ?', (nm_sac,))
+            sID = cur.fetchall()
+            inputs['sacado_id'] = sID[0]['id']
+
+
+        sql = 'SELECT * FROM titulo'
+        where =[]
+
+        for key in inputs:
+            if inputs[key] != None and inputs[key] != '':
+                where.append(f'{key} = {inputs[key]}')
+                
+        sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
+
+        titulos = cur.execute(sql)
+        titulos = cur.fetchall()
+                
+        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos)
 
 # ----- FIRST PAGE ------ #
 @app.route('/login', methods=['GET', 'POST'])

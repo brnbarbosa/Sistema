@@ -3,6 +3,8 @@ from functools import wraps
 
 from datetime import datetime, date
 
+import math
+
 def login_required(f):
     # decorator to check login
     @wraps(f)
@@ -19,9 +21,12 @@ def day(vencimento):
 def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
 
-def factor(taxa, dias):
-    return ((taxa/30) * dias)/100
+def factor(taxa, dias, valor):
+    expo = dias / 30
+    base = (taxa / 100) + 1
+    factor = (valor * pow(base, expo)) - valor
+    return factor
 
 def lqd(fator, valor):
-    liquido = valor - (fator * valor)
+    liquido = valor - fator
     return float(liquido)
