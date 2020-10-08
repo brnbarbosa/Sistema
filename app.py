@@ -36,6 +36,24 @@ Session(app)
 @app.route('/')
 @login_required
 def index():
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create cursor
+    cur = con.cursor()
+
+    ttlos = cur.execute('SELECT * FROM titulo')
+    ttlos = cur.fetchall()
+
+    for row in ttlos:
+        if row['status'] == 'Em Aberto' and datetime.strptime(row['vencimento'], '%Y-%m-%d').date() < date.today():
+            cur.execute("UPDATE titulo SET status = 'Vencido' WHERE vencimento = ?", (row['vencimento'],))
+            con.commit()
+
+
+    con.close()
+
     return render_template('index.html')
 
 # ----- OPERATION ------ #
@@ -231,8 +249,8 @@ def bordero():
         sId = cur.execute('SELECT id FROM sacados WHERE nome = (SELECT sacado FROM borderos WHERE sacado = ?)', (row['sacado'],))
         sId = cur.fetchall()
 
-        cur.execute("INSERT INTO titulo (cliente_id, sacado_id, titulo, vencimento, valor, dt_negoc, tipo, status) VALUES (?,?,?,?,?,?,?,?)",
-                    (cId[0]['id'], sId[0]['id'], row['titulo'], row['vencimento'], row['valor'], row['dt_negoc'], row['tipo'], "Em Aberto"))
+        cur.execute("INSERT INTO titulo (cliente_id, sacado_id, titulo, vencimento, valor, dt_negoc, tipo, status, nm_sac) VALUES (?,?,?,?,?,?,?,?,?)",
+                    (cId[0]['id'], sId[0]['id'], row['titulo'], row['vencimento'], row['valor'], row['dt_negoc'], row['tipo'], "Em Aberto", row['sacado']))
 
         con.commit()
 
@@ -293,9 +311,9 @@ def relatorios():
         inputs = {
                 "cliente_id": None,
                 "sacado_id": None,
-                "tipo": request.form.get('tipo'),
-                "status": request.form.get('status'),
-                "titulo": request.form.get('titulo'),
+                "tipo": "'" + request.form.get('tipo') + "'",
+                "status": "'" + request.form.get('status') + "'",
+                "titulo": "'" + request.form.get('titulo') + "'",
                 "vencimento": request.form.get('vencimento')
         }
 
@@ -317,10 +335,11 @@ def relatorios():
         where =[]
 
         for key in inputs:
-            if inputs[key] != None and inputs[key] != '':
+            if inputs[key] != None and inputs[key] != "''" and inputs[key] != '':
                 where.append(f'{key} = {inputs[key]}')
                 
-        sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
+        if where:
+            sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
 
         titulos = cur.execute(sql)
         titulos = cur.fetchall()
