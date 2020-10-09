@@ -192,6 +192,24 @@ def operacao():
         con.commit()
 
         return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
+
+@app.route('/cancelar', methods=['GET', 'POST'])
+@login_required
+def cancelar():
+
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # cancela a operação
+    cur.execute('DELETE FROM borderos')
+    con.commit()
+
+    return redirect('/')
+
         
 @app.route('/table', methods=['GET'])
 @login_required
@@ -345,6 +363,53 @@ def relatorios():
         titulos = cur.fetchall()
                 
         return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos)
+
+@app.route('/baixa', methods=['GET', 'POST'])
+@login_required
+def baixa():
+
+     # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.fetchall()
+
+    # query títulos table 
+    titlo = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
+    titlo = cur.fetchall()
+
+    if request.method == 'GET':
+        return render_template('baixa.html', cliente=cliente, titulo=titlo)
+
+    else:
+
+        # get user inputs
+        inputs = {
+            "cliente_id": None,
+            "titulo": request.form.get('titulo'),
+            "dt_baixa": request.form.get('dt_baixa')
+        }
+
+        nm_cli = request.form.get('cliente')
+        if nm_cli != None:
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
+            cID = cur.fetchall()
+            inputs['cliente_id'] = cID[0]['id']
+
+        cur.execute("UPDATE titulo SET dt_baixa=:dt, status='Quitado' WHERE cliente_id=:idC AND titulo=:tit;", {'dt':inputs['dt_baixa'], 'idC':inputs['cliente_id'], 'tit':inputs['titulo']})
+        con.commit()
+
+        titlo = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
+        titlo = cur.fetchall()
+
+        return render_template('baixa.html', cliente=cliente, titulo=titlo)
+
 
 # ----- FIRST PAGE ------ #
 @app.route('/login', methods=['GET', 'POST'])
