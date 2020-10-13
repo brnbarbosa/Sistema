@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quitação
+{% endblock %}
+
+{% block main %} 
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <h1 class='h2'>Adiantamentos</h1>
+            <form action='quitacao' method='POST'>
+                <div class='form-group'>
+                    <label for=''>Selecionar</label>
+                    <!--Selection - Cliente-->
+                    <div class="form-group">
+                        <select class="form-control" name="cliente">
+                            <option disabled selected value>Cliente</option>
+                        {% for row in cliente %}
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
+                        {% endfor %}
+                        </select>   
+                    </div>
+                    <div class='form-goup'>
+                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
+                    </div>
+                    <button type='submit' id='baixa' class='btn btn-sm btn-outline-secondary'>Quitar</button>
+                </div>
+            </form>
+    </div>
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <div class='table-responsive'>
+            <table class='table table-striped table-sm'>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in adiantamento %}
+                        <tr>
+                            <td>{{ row['cliente_id'] }}</td>
+                            <td>{{ row['data'] }}</td>
+                            <td>{{ row['valor'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+{% endblock %}

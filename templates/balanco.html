@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Balanço
+{% endblock %}
+
+{% block main %} 
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <h1 class='h2'>Balanço</h1>
+            <form action='balanco' method='POST'>
+                <div class='form-group'>
+                    <label for=''>Cadastrar saldo conta</label>
+                    <!--Selection - Cliente-->
+                    <div class='form-goup'>
+                        <input name='saldo' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
+                    </div>
+                    <button type='submit' id='baixa' class='btn btn-sm btn-outline-secondary'>Cadastrar</button>
+                </div>
+            </form>
+    </div>
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+            <p style='text-align: left;'> Saldo Banco: R$ {{ saldo }}<br>
+                Contas a receber<br>
+                Cheques: R$ {{ cheques[0]["SUM(valor)"] }}<br>
+                Duplicatas: R$ {{ duplicatas[0]["SUM(valor)"] }}<br>
+                Adiantamentos: {{ "R${:,.2f}".format(adiantamentos[0]["SUM(valor)"]) }}<br>
+                <b>Total: {{ "R${:,.2f}".format(total) }}</b>
+                </p>          
+        </div>
+    </div>
+{% endblock %}

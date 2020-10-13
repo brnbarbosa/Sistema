@@ -410,6 +410,145 @@ def baixa():
 
         return render_template('baixa.html', cliente=cliente, titulo=titlo)
 
+@app.route('/adiantamentos', methods=['GET', 'POST'])
+@login_required
+def adiantamentos():
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.fetchall()
+
+    # query adiantamentos table
+    ad = cur.execute('SELECT * FROM adiantamentos')
+    ad = cur.fetchall()
+
+    if request.method == "GET":
+        return render_template('adiantamentos.html', cliente=cliente, adiantamento=ad)
+
+    else:
+
+        # get user inputs
+        inputs = {
+            "cliente_id": None,
+            "valor": request.form.get('valor')
+        }
+
+        nm_cli = request.form.get('cliente')
+        if nm_cli != None:
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
+            cID = cur.fetchall()
+            inputs['cliente_id'] = cID[0]['id']
+
+        cur.execute('INSERT INTO adiantamentos (cliente_id, data, valor) VALUES (?,?,?)', (inputs['cliente_id'], date.today(), inputs['valor']))
+        con.commit()
+
+        # query adiantamentos table
+        ad = cur.execute('SELECT * FROM adiantamentos')
+        ad = cur.fetchall()
+
+        return render_template('adiantamentos.html', cliente=cliente, adiantamento=ad)
+
+@app.route('/quitacao', methods=['GET', 'POST'])
+@login_required
+def quitacao():
+
+     # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.fetchall()
+
+    # query adiantamentos table
+    ad = cur.execute('SELECT * FROM adiantamentos')
+    ad = cur.fetchall()
+
+    if request.method == 'GET':
+        return render_template('quitacao.html', cliente=cliente, adiantamento=ad)
+
+    else:
+
+        # get user inputs
+        inputs = {
+            "cliente_id": None,
+            "valor": request.form.get('valor')
+        }
+
+        nm_cli = request.form.get('cliente')
+        if nm_cli != None:
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
+            cID = cur.fetchall()
+            inputs['cliente_id'] = cID[0]['id']
+
+        cur.execute("DELETE FROM adiantamentos WHERE cliente_id=:idC AND valor=:vl", {'idC':inputs['cliente_id'], 'vl':inputs['valor']})
+        con.commit()
+
+        # query adiantamentos table
+        ad = cur.execute('SELECT * FROM adiantamentos')
+        ad = cur.fetchall()
+
+        return render_template('quitacao.html', cliente=cliente, adiantamento=ad)
+
+@app.route('/balanco', methods=['GET', 'POST'])
+@login_required
+def balanco():
+
+     # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # query cheques and em aberto
+    cheques = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "cheques" AND status = "Em Aberto";')
+    cheques = cur.fetchall()
+
+    # query duplicatas and em aberto
+    duplicatas = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "duplicata" AND status = "Em Aberto";')
+    duplicatas = cur.fetchall()
+
+    # query adiantamentos
+    adiantamentos = cur.execute('SELECT SUM(valor) FROM adiantamentos;')
+    adiantamentos = cur.fetchall()
+
+    saldo = 0.00
+
+    if request.method == 'GET':
+        return render_template('balanco.html', cheques=cheques, duplicatas=duplicatas, adiantamentos=adiantamentos, saldo=saldo)
+
+    else:
+
+        # get user inputs
+        saldo = float(request.form.get('saldo'))
+        total = 0.00
+
+        if cheques[0]['SUM(valor)'] != None and duplicatas[0]['SUM(valor)'] != None and adiantamentos[0]['SUM(valor)'] != None:
+            total = saldo + cheques[0]['SUM(valor)'] + duplicatas[0]['SUM(valor)'] + adiantamentos[0]['SUM(valor)']
+        elif cheques[0]['SUM(valor)'] == None:
+            total = saldo + duplicatas[0]['SUM(valor)'] + adiantamentos[0]['SUM(valor)']
+        elif duplicatas[0]['SUM(valor)'] == None:
+            total = saldo + cheques[0]['SUM(valor)'] + adiantamentos[0]['SUM(valor)']
+        elif adiantamentos[0]['SUM(valor)'] == None:
+            total = saldo + cheques[0]['SUM(valor)'] + duplicatas[0]['SUM(valor)']
+        else:
+            total = saldo
+
+
+        return render_template('balanco.html', cheques=cheques, duplicatas=duplicatas, adiantamentos=adiantamentos, saldo=saldo, total=total)
+
+
 
 # ----- FIRST PAGE ------ #
 @app.route('/login', methods=['GET', 'POST'])
