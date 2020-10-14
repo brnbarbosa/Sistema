@@ -6,30 +6,24 @@
 
 {% block main %} 
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
-        <h1 class='h2'>Operação</h1>
+        <h3>Operação</h3>
             <form action='operacao' method='POST'>
                 <div class='form-group'>
-                    <label for=''>Lançar</label>
                     <!--Selection - Cliente-->
-                    <div class="form-group">
                         <select class="form-control" name="cliente">
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>   
-                        <input name='tx' autofocus class='form-control' placeholder='Taxa' type='number' step='0.01'>
-                    </div>
-                    <!--Selection - Sacado-->
-                    <div class="form-group">
+                    <!--Selection - Sacado
                         <select class="form-control" name="sacado">
                             <option disabled selected value>Sacado</option>
                         {% for row in sacado %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
-                        </select>
-                    </div>
-                    <div class='form-goup'>
+                        </select>-->
+                        <input name='sacado' autofocus class='form-control' placeholder='Sacado' type='text'>
                         <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
                         <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
                         <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
@@ -38,16 +32,15 @@
                             <option value='cheque'>Cheque</option>
                             <option value='duplicata'>Duplicata</option>
                         </select>
-                    </div>
-                </div>
+                </div>        
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Incluir</button>
             </form>
-            <form action='bordero' method='POST'>
-                <button type="submit" class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
-            </form>
-            <form action='cancelar' method='POST'>
-                <button type="submit" class='btn btn-sm btn-outline-secondary'>Cancelar Operação</button>                   
-            </form>
+                <form action='bordero' method='POST'>
+                    <button type="submit" class='btn btn-sm btn-outline-secondary'>Finalizar</button>                   
+                </form>
+                <form action='cancelar' method='POST'>
+                    <button type="submit" class='btn btn-sm btn-outline-secondary'>Cancelar Operação</button>                   
+                </form>  
     </div>
     <div class='-frame'>
         <iframe style="width:100%; min-height:500px;height:65%" marginwidth="0" marginheight="0" src='table' title='table' frameborder="0" noresize scrolling="auto"></iframe>

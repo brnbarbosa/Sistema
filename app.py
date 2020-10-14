@@ -113,13 +113,18 @@ def clientes():
 
     # POST
     else:
-        nm = request.form.get('nome')
-        cp = request.form.get('cep')
-        end = request.form.get('endereco')
-        cnpj = request.form.get('cnpj')
+
+        inputs = {
+            'nm': request.form.get('nome'),
+            'cp': request.form.get('cep'),
+            'end': request.form.get('endereco'),
+            'cnpj': request.form.get('cnpj'),
+            'taxa': request.form.get('tx')
+        }
+        
 
          # insert new 'sacado' to db
-        cur.execute("INSERT INTO clientes (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm, cp, end, cnpj) )
+        cur.execute("INSERT INTO clientes (nome, cep, endereço, cnpj, taxa) VALUES (?,?,?,?,?)", (inputs['nm'], inputs['cp'], inputs['end'], inputs['cnpj'], inputs['taxa']) )
             
         con.commit()    
 
@@ -162,6 +167,14 @@ def operacao():
         # name of sacado
         nm_sacado = request.form.get('sacado')
 
+        checkSacado = cur.execute('SELECT id FROM sacados WHERE nome = ?;', (nm_sacado,))
+        checkSacado = cur.fetchone()
+
+        if checkSacado == None:
+            # insert new 'sacado' to db
+            cur.execute("INSERT INTO sacados (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm_sacado, 'Inserir', 'Inserir', 'Inserir') )
+            con.commit()
+
         # titulo number
         titulo = request.form.get('titulo')
 
@@ -177,17 +190,18 @@ def operacao():
         tipo = request.form.get('tipo')
 
         # taxa float value
-        taxa = float(request.form.get('tx'))
+        taxa = cur.execute('SELECT taxa FROM clientes WHERE nome = ?', (nm_cliente,))
+        taxa = cur.fetchall()
 
         # factor
-        fator = factor(taxa, dias, valor)
+        fator = factor(taxa[0]['taxa'], dias, valor)
 
         # liquido of operation
         liquido = float(lqd(fator, valor))
  
         # insert all that information in a support table
         cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa, fator, liquido, dias))
+                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa[0]['taxa'], fator, liquido, dias))
 
         con.commit()
 
