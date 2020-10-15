@@ -526,7 +526,7 @@ def balanco():
     cur = con.cursor()
 
     # query cheques and em aberto
-    cheques = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "cheques" AND status = "Em Aberto";')
+    cheques = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "cheque" AND status = "Em Aberto";')
     cheques = cur.fetchall()
 
     # query duplicatas and em aberto

@@ -15,8 +15,12 @@ def login_required(f):
     return decorated_function
 
 def day(vencimento):
-    # TODO IMPLEMENTAR DIAS DA SEMANA
-    return ((vencimento - date.today()).days + 1)
+    if vencimento.weekday() == 5:
+        return ((vencimento - date.today()).days + 3)
+    elif vencimento.weekday() == 6:
+        return ((vencimento - date.today()).days + 2)
+    else:
+        return ((vencimento - date.today()).days + 1)
 
 def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
