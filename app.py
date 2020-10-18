@@ -71,7 +71,7 @@ def sacados():
     # GET
     if request.method == 'GET':
         # select all 'sacados'
-        cur.execute('SELECT * FROM sacados')
+        rows = cur.execute('SELECT * FROM sacados ORDER BY nome')
 
         rows = cur.fetchall()
 
@@ -79,13 +79,19 @@ def sacados():
 
     # POST
     else:
-        nm = request.form.get('nome')
+        nm = request.form.get('nome').upper()
         cp = request.form.get('cep')
-        end = request.form.get('endereco')
+        end = request.form.get('endereco').upper()
         cnpj = request.form.get('cnpj')
 
-         # insert new 'sacado' to db
-        cur.execute("INSERT INTO sacados (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm, cp, end, cnpj) )
+        nm_testing = cur.execute('SELECT * FROM sacados WHERE nome = ?', (nm,))
+        nm_testing = cur.fetchone()
+
+        if nm_testing != None:
+            cur.execute('UPDATE sacados SET cep=:c, endereço=:e, cnpj=:j WHERE nome=:n;', {'c':cp, 'e':end, 'j':cnpj, 'n':nm})   
+        else:
+            # insert new 'sacado' to db
+            cur.execute("INSERT INTO sacados (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm, cp, end, cnpj) )
             
         con.commit()    
 
@@ -105,7 +111,7 @@ def clientes():
     # GET
     if request.method == 'GET':
         # select all 'sacados'
-        cur.execute('SELECT * FROM clientes')
+        cur.execute('SELECT * FROM clientes ORDER BY nome')
 
         rows = cur.fetchall()
 
@@ -115,9 +121,9 @@ def clientes():
     else:
 
         inputs = {
-            'nm': request.form.get('nome'),
+            'nm': request.form.get('nome').upper(),
             'cp': request.form.get('cep'),
-            'end': request.form.get('endereco'),
+            'end': request.form.get('endereco').upper(),
             'cnpj': request.form.get('cnpj'),
             'taxa': request.form.get('tx')
         }
@@ -142,7 +148,7 @@ def operacao():
     cur = con.cursor()
 
     # query cliente table to list all clientes
-    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.execute('SELECT nome FROM clientes ORDER BY nome')
     cliente = cur.fetchall()
 
     # query sacados table to list all sacados
@@ -162,10 +168,10 @@ def operacao():
 
         # get all user inputs
         # name of cliente
-        nm_cliente = request.form.get('cliente')
+        nm_cliente = request.form.get('cliente').upper()
 
         # name of sacado
-        nm_sacado = request.form.get('sacado')
+        nm_sacado = request.form.get('sacado').upper()
 
         checkSacado = cur.execute('SELECT id FROM sacados WHERE nome = ?;', (nm_sacado,))
         checkSacado = cur.fetchone()
@@ -350,13 +356,13 @@ def relatorios():
         }
 
         # get all user inputs
-        nm_cli = request.form.get('cliente')
+        nm_cli = request.form.get('cliente').upper()
         if nm_cli != None:
             cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
             cID = cur.fetchall()
             inputs['cliente_id'] = cID[0]['id']
 
-        nm_sac = request.form.get('sacado')
+        nm_sac = request.form.get('sacado').upper()
         if nm_sac != None:
             sID = cur.execute('SELECT id FROM sacados WHERE nome = ?', (nm_sac,))
             sID = cur.fetchall()
@@ -410,7 +416,7 @@ def baixa():
             "dt_baixa": request.form.get('dt_baixa')
         }
 
-        nm_cli = request.form.get('cliente')
+        nm_cli = request.form.get('cliente').upper()
         if nm_cli != None:
             cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
             cID = cur.fetchall()
@@ -453,7 +459,7 @@ def adiantamentos():
             "valor": request.form.get('valor')
         }
 
-        nm_cli = request.form.get('cliente')
+        nm_cli = request.form.get('cliente').upper()
         if nm_cli != None:
             cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
             cID = cur.fetchall()
@@ -499,7 +505,7 @@ def quitacao():
             "valor": request.form.get('valor')
         }
 
-        nm_cli = request.form.get('cliente')
+        nm_cli = request.form.get('cliente').upper()
         if nm_cli != None:
             cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
             cID = cur.fetchall()

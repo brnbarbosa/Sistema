@@ -25,21 +25,23 @@
         <table class='table table-striped table-sm'>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    
                     <th>Nome</th>
                     <th>CEP</th>
                     <th>Endereço</th>
                     <th>CNPJ</th>
+                    <th>ID</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in rows %}
                     <tr>
-                        <td>{{ row['id'] }}</td>
+                        
                         <td>{{ row['nome'] }}</td>
                         <td>{{ row['cep'] }}</td>
                         <td>{{ row['endereço'] }}</td>
                         <td>{{ row['cnpj'] }}</td>
+                        <td>{{ row['id'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
