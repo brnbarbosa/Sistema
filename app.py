@@ -16,6 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
+
 def getApp():
     return app
 
@@ -370,14 +371,16 @@ def relatorios():
         }
 
         # get all user inputs
-        nm_cli = request.form.get('cliente').upper()
+        nm_cli = request.form.get('cliente')
         if nm_cli != None:
+            nm_cli = nm_cli.upper()
             cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
             cID = cur.fetchall()
             inputs['cliente_id'] = cID[0]['id']
 
-        nm_sac = request.form.get('sacado').upper()
+        nm_sac = request.form.get('sacado')
         if nm_sac != None:
+            nm_sac = nm_sac.upper()
             sID = cur.execute('SELECT id FROM sacados WHERE nome = ?', (nm_sac,))
             sID = cur.fetchall()
             inputs['sacado_id'] = sID[0]['id']
