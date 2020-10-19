@@ -87,15 +87,26 @@ def sacados():
         nm_testing = cur.execute('SELECT * FROM sacados WHERE nome = ?', (nm,))
         nm_testing = cur.fetchone()
 
-        if nm_testing != None:
-            cur.execute('UPDATE sacados SET cep=:c, endereço=:e, cnpj=:j WHERE nome=:n;', {'c':cp, 'e':end, 'j':cnpj, 'n':nm})   
-        else:
-            # insert new 'sacado' to db
+        if nm_testing == None:
+             # insert new 'sacado' to db
             cur.execute("INSERT INTO sacados (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm, cp, end, cnpj) )
-            
-        con.commit()    
+            con.commit() 
+        else:
+            cur.execute('UPDATE sacados SET cep=:c, endereço=:e, cnpj=:j WHERE nome=:n;', {'c':cp, 'e':end, 'j':cnpj, 'n':nm,})
+            con.commit() 
+                       
 
         return redirect('/sacados')
+
+@app.route('/atualizar', methods=['GET', 'POST'])
+@login_required
+def atualizar():
+    # connect database
+    con = sqlite3.connect('brn.db')
+    con.row_factory = sqlite3.Row
+
+    # create cursor
+    cur = con.cursor()
 
 @app.route('/clientes', methods=['GET', 'POST'])
 @login_required
