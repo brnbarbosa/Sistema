@@ -16,6 +16,9 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
+def getApp():
+    return app
+
 # ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
