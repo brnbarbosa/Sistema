@@ -406,7 +406,7 @@ def relatorios():
 def baixa():
 
      # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect('/home/brnbarbosa/mysite/brn.db')
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -451,7 +451,7 @@ def baixa():
 @login_required
 def adiantamentos():
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect('/home/brnbarbosa/mysite/brn.db')
     con.row_factory = sqlite3.Row
 
     # create a cursor
