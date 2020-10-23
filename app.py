@@ -163,7 +163,6 @@ def preparacao():
     cliente = cur.fetchall()
 
     if request.method == 'GET':
-        
         return render_template('preparacao.html', cliente=cliente)
 
     else:
