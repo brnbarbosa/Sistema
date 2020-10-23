@@ -16,7 +16,8 @@
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>  
-                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>             
+                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
+                        <input name='data' autofocus class='form-control' placeholder='Data do AD' type='date'>             
                 </div>
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Cadastrar</button>
             </form>
@@ -35,7 +36,8 @@
                     {% for row in adiantamento %}
                         <tr>
                             <td>{{ row['cliente_id'] }}</td>
-                            <td>{{ row['data'] }}</td>
+                            {% set lt = row['data'].split('-') %}
+                            <td>{{ lt[2]+'/'+lt[1]+'/'+lt[0] }}</td>
                             <td>{{ row['valor'] }}</td>
                         </tr>
                     {% endfor %}

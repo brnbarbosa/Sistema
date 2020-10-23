@@ -2,7 +2,7 @@ from cs50 import SQL
 import sqlite3
 from datetime import datetime, date
 
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, current_app
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, current_app, url_for
 from flask_session import Session
 
 
@@ -15,6 +15,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
+
+DATABASE = 'brn.db'
 
 def getApp():
     return app
@@ -41,7 +43,7 @@ Session(app)
 @login_required
 def index():
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create cursor
@@ -66,7 +68,7 @@ def index():
 def sacados():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create cursor
@@ -102,22 +104,12 @@ def sacados():
 
         return redirect('/sacados')
 
-@app.route('/atualizar', methods=['GET', 'POST'])
-@login_required
-def atualizar():
-    # connect database
-    con = sqlite3.connect('brn.db')
-    con.row_factory = sqlite3.Row
-
-    # create cursor
-    cur = con.cursor()
-
 @app.route('/clientes', methods=['GET', 'POST'])
 @login_required
 def clientes():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create cursor
@@ -142,21 +134,50 @@ def clientes():
             'cnpj': request.form.get('cnpj'),
             'taxa': request.form.get('tx')
         }
-        
 
-         # insert new 'sacado' to db
-        cur.execute("INSERT INTO clientes (nome, cep, endereço, cnpj, taxa) VALUES (?,?,?,?,?)", (inputs['nm'], inputs['cp'], inputs['end'], inputs['cnpj'], inputs['taxa']) )
-            
-        con.commit()    
+        nm_testing = cur.execute('SELECT * FROM clientes WHERE nome = ?', (inputs['nm'],))
+        nm_testing = cur.fetchone()
+
+        if nm_testing == None:
+             # insert new 'dliente' to db
+            cur.execute("INSERT INTO clientes (nome, cep, endereço, cnpj, taxa) VALUES (?,?,?,?,?)",(inputs['nm'], inputs['cp'], inputs['end'], inputs['cnpj'], inputs['taxa']) )
+            con.commit() 
+        else:
+            cur.execute('UPDATE clientes SET cep=:c, endereço=:e, cnpj=:j, taxa=:tx WHERE nome=:n;', {'c':inputs['cp'], 'e':inputs['end'], 'j':inputs['cnpj'], 'tx':inputs['taxa'], 'n':inputs['nm'],})
+            con.commit() 
 
         return redirect('/clientes')
+
+@app.route('/preparacao', methods=['GET', 'POST'])
+@login_required
+def preparacao():
+    # connect database
+    con = sqlite3.connect(DATABASE)
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes ORDER BY nome')
+    cliente = cur.fetchall()
+
+    if request.method == 'GET':
+        
+        return render_template('preparacao.html', cliente=cliente)
+
+    else:
+        nm_cliente = request.form.get('cliente').upper()
+        dt_negoc = datetime.strptime(request.form.get('dt_negoc'), '%Y-%m-%d')
+        return redirect(url_for('operacao', dt_negoc=dt_negoc, cliente=nm_cliente))
+
 
 @app.route('/operacao', methods=['GET', 'POST'])
 @login_required
 def operacao():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -173,17 +194,16 @@ def operacao():
     borderos = cur.execute('SELECT * FROM borderos') 
     borderos = cur.fetchall()
 
-
     # GET
     if request.method == 'GET':
         return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
     
     # POST
     else:
-
         # get all user inputs
-        # name of cliente
-        nm_cliente = request.form.get('cliente').upper()
+
+        nm_cliente = request.args.get('nm_cliente', None)
+        dt_negoc = request.args.get('dt_negoc', None)
 
         # name of sacado
         nm_sacado = request.form.get('sacado').upper()
@@ -204,8 +224,7 @@ def operacao():
         
         # vencimento and calculating total days between today and vencimento date
         venc = datetime.strptime(request.form.get('vencimento'), '%Y-%m-%d')
-        vencimento = date(venc.year, venc.month, venc.day)
-        dias = day(vencimento)
+        dias = day(venc, dt_negoc)
 
         # tipo (cheque or duplicata)
         tipo = request.form.get('tipo')
@@ -222,7 +241,7 @@ def operacao():
  
         # insert all that information in a support table
         cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), date.today(), tipo, taxa[0]['taxa'], fator, liquido, dias))
+                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), dt_negoc, tipo, taxa[0]['taxa'], fator, liquido, dias))
 
         con.commit()
 
@@ -233,7 +252,7 @@ def operacao():
 def cancelar():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -251,7 +270,7 @@ def cancelar():
 def table():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -268,7 +287,7 @@ def table():
 def bordero():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -282,6 +301,8 @@ def bordero():
 
     n_titulos = cur.execute('SELECT COUNT(*) FROM borderos')
     n_titulos = cur.fetchall()
+
+    tarifas = 10 + (n_titulos[0]['COUNT(*)'] * 5)
     
     dias = cur.execute('SELECT SUM(prazo) FROM borderos')
     dias = cur.fetchall()
@@ -293,6 +314,30 @@ def bordero():
 
     li = cur.execute('SELECT SUM(liquido) FROM borderos')
     li = cur.fetchall()
+
+    cliente = cur.execute('SELECT * FROM clientes WHERE nome = ?', (borderos[0]['cliente'],))
+    cliente = cur.fetchone()
+
+    liq = (li[0]['SUM(liquido)'] - tarifas)
+
+    if request.method == 'GET':
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas)
+    else:
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas)
+
+@app.route('/encerrar', methods=['POST'])
+@login_required
+def encerrar():
+
+    # connect database
+    con = sqlite3.connect(DATABASE)
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.fetchall()
 
     # insert all data in Titulos
     for row in borderos:
@@ -307,22 +352,6 @@ def bordero():
 
         con.commit()
 
-    if request.method == 'GET':
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=li)
-    else:
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=li)
-
-@app.route('/encerrar', methods=['POST'])
-@login_required
-def encerrar():
-
-    # connect database
-    con = sqlite3.connect('brn.db')
-    con.row_factory = sqlite3.Row
-
-    # create a cursor
-    cur = con.cursor()
-
     cur.execute('DELETE FROM borderos')
 
     con.commit()
@@ -336,7 +365,7 @@ def encerrar():
 @login_required
 def relatorios():
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -367,7 +396,7 @@ def relatorios():
                 "tipo": "'" + request.form.get('tipo') + "'",
                 "status": "'" + request.form.get('status') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
-                "vencimento": request.form.get('vencimento')
+                "vencimento": "'" + str(request.form.get('vencimento')) + "'"
         }
 
         # get all user inputs
@@ -406,7 +435,7 @@ def relatorios():
 def baixa():
 
      # connect database
-    con = sqlite3.connect('/home/brnbarbosa/mysite/brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -451,7 +480,7 @@ def baixa():
 @login_required
 def adiantamentos():
     # connect database
-    con = sqlite3.connect('/home/brnbarbosa/mysite/brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -473,7 +502,8 @@ def adiantamentos():
         # get user inputs
         inputs = {
             "cliente_id": None,
-            "valor": request.form.get('valor')
+            "valor": request.form.get('valor'),
+            "data": request.form.get('data')
         }
 
         nm_cli = request.form.get('cliente').upper()
@@ -482,7 +512,7 @@ def adiantamentos():
             cID = cur.fetchall()
             inputs['cliente_id'] = cID[0]['id']
 
-        cur.execute('INSERT INTO adiantamentos (cliente_id, data, valor) VALUES (?,?,?)', (inputs['cliente_id'], date.today(), inputs['valor']))
+        cur.execute('INSERT INTO adiantamentos (cliente_id, data, valor) VALUES (?,?,?)', (inputs['cliente_id'], inputs['data'], inputs['valor']))
         con.commit()
 
         # query adiantamentos table
@@ -496,7 +526,7 @@ def adiantamentos():
 def quitacao():
 
      # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -519,7 +549,8 @@ def quitacao():
         # get user inputs
         inputs = {
             "cliente_id": None,
-            "valor": request.form.get('valor')
+            "valor": request.form.get('valor'),
+            "data": request.form.get('data')
         }
 
         nm_cli = request.form.get('cliente').upper()
@@ -542,7 +573,7 @@ def quitacao():
 def balanco():
 
      # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create a cursor
@@ -592,7 +623,7 @@ def balanco():
 def login():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create cursor
@@ -636,7 +667,7 @@ def login():
 def register():
 
     # connect database
-    con = sqlite3.connect('brn.db')
+    con = sqlite3.connect(DATABASE)
     con.row_factory = sqlite3.Row
 
     # create cursor
@@ -656,7 +687,7 @@ def register():
             psswd = generate_password_hash(request.form.get('password'))
 
             # connect to db    
-            with sqlite3.connect("brn.db") as con:
+            with sqlite3.connect(DATABASE) as con:
                 cur = con.cursor()
 
                 # insert new user to db

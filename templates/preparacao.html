@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Preparação
+{% endblock %}
+
+{% block main %} 
+    <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <h3>Preparação</h3>
+            <form action='preparacao' method='POST'>
+                    <!--Selection - Cliente-->
+                        <select class="form-control" name="cliente">
+                            <option disabled selected value>Cliente</option>
+                        {% for row in cliente %}
+                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
+                        {% endfor %}
+                        </select>   
+                        <p>Data de negociação:</p><input name='dt_negoc' autofocus class='form-control' placeholder='Data de Negociação' type='date'>                        
+            </form>
+                <form action="preparacao" method='POST'>
+                    <button type="submit" class='btn btn-sm btn-outline-secondary'>Prosseguir</button>                   
+                </form>
+    </div>
+{% endblock %}

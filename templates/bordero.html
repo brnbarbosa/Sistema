@@ -9,20 +9,34 @@
         <form action='bordero' method='POST'>
             <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button>                   
         </form>
+        </select> 
         <form action='encerrar' method='POST'>
             <button type='submit' value="print a div" class='btn btn-sm btn-outline-secondary'>Encerrar</button>                   
         </form>
     </div>
     <div id='print'>
-        <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-1 mb-3 border-bottom'>
             <h1 class='h2'>Bordero</h1>
-            <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
-                <p style='text-align: left;'> Total dos títulos: R$ {{ total[0]["SUM(valor)"] }}<br>
-                    Nº Títulos: {{ n_titulos[0]["COUNT(*)"] }}<br>
-                    Prazo Médio: {{ p_medio }}<br>
-                    Fator: {{ "R${:,.2f}".format(fator[0]["SUM(fator)"]) }}<br>
-                    <b>Líquido: {{ "R${:,.2f}".format(li[0]["SUM(liquido)"]) }}</b></p>          
-            </div>
+            <p style='text-align: left;'> Contratante:  {{ borderos[0]['cliente'] }}<br>
+                CNPJ: {{ cliente['cnpj'] }}<br>
+                Endereço: {{ cliente['endereço'] }}<br>
+                Contratada: BRN-IMPTUS<br>
+                {% set ltN = borderos[0]['dt_negoc'].split('-') %}
+                Data Negociação: {{ ltN[2][0:2]+'/'+ltN[1]+'/'+ltN[0] }}</p>
+
+                <p style='text-align: right;'> Total dos títulos:<br>
+                    Nº Títulos:<br>
+                    Prazo Médio:<br>
+                    Tarifas: <br>
+                    Fator: <br>
+                    <b>Líquido:</b></p>     
+            
+                <p style='text-align: left;'> {{ "R${:,.2f}".format(total[0]["SUM(valor)"]) }}<br>
+                    {{ n_titulos[0]["COUNT(*)"] }}<br>
+                    {{ p_medio }}<br>
+                    {{ tarifas }}<br>
+                    {{ "R${:,.2f}".format(fator[0]["SUM(fator)"]) }}<br>
+                    <b>{{ "R${:,.2f}".format(li) }}</b></p>          
         </div>
         <div class='table-responsive'>
             <table class='table table-striped table-sm'>
@@ -41,7 +55,8 @@
                             <td>{{ row['sacado'] }}</td>
                             <td>{{ row['titulo'] }}</td>
                             <td>{{ row['valor'] }}</td>
-                            <td>{{ row['vencimento'] }}</td>
+                            {% set lt = row['vencimento'].split('-') %}
+                            <td>{{ lt[2]+'/'+lt[1]+'/'+lt[0] }}</td>
                             <td>{{ row['tipo'] }}</td>
                         </tr>
                     {% endfor %}

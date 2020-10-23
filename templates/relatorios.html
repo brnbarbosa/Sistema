@@ -61,7 +61,8 @@
                             <td>{{ row['nm_sac'] }}</td>
                             <td>{{ row['titulo'] }}</td>
                             <td>{{ row['valor'] }}</td>
-                            <td>{{ row['vencimento'] }}</td>
+                            {% set lt = row['vencimento'].split('-') %}
+                            <td>{{ lt[2]+'/'+lt[1]+'/'+lt[0] }}</td>
                             <td>{{ row['tipo'] }}</td>
                             <td>{{ row['status'] }}</td>
                         </tr>

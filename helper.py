@@ -14,13 +14,13 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def day(vencimento):
+def day(vencimento, dt_negoc):
     if vencimento.weekday() == 5:
-        return ((vencimento - date.today()).days + 3)
+        return ((vencimento - dt_negoc).days + 3)
     elif vencimento.weekday() == 6:
-        return ((vencimento - date.today()).days + 2)
+        return ((vencimento - dt_negoc).days + 2)
     else:
-        return ((vencimento - date.today()).days + 1)
+        return ((vencimento - dt_negoc).days + 1)
 
 def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
