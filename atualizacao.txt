@@ -1,0 +1,4 @@
+26-10-2020 
+ - Unico comando para inclusão do cliente no bordero;
+ - Opção de baixa do adiantamento no campo de operações;
+ - Nome na planilha de adiantamentos e quitação;

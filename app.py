@@ -57,7 +57,6 @@ def index():
             cur.execute("UPDATE titulo SET status = 'Vencido' WHERE vencimento = ?", (row['vencimento'],))
             con.commit()
 
-
     con.close()
 
     return render_template('index.html')
@@ -168,6 +167,8 @@ def preparacao():
     else:
         nm_cliente = request.form.get('cliente').upper()
         dt_negoc = datetime.strptime(request.form.get('dt_negoc'), '%Y-%m-%d')
+        session['nm_cliente'] = nm_cliente
+        session['dt_negoc'] = dt_negoc
         return redirect(url_for('operacao', dt_negoc=dt_negoc, cliente=nm_cliente))
 
 
@@ -200,9 +201,8 @@ def operacao():
     # POST
     else:
         # get all user inputs
-
-        nm_cliente = request.args.get('nm_cliente', None)
-        dt_negoc = request.args.get('dt_negoc', None)
+        nm_cliente = session['nm_cliente']
+        dt_negoc = session['dt_negoc']
 
         # name of sacado
         nm_sacado = request.form.get('sacado').upper()
@@ -322,7 +322,22 @@ def bordero():
     if request.method == 'GET':
         return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas)
     else:
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas)
+
+        nome_cliente = session['nm_cliente']
+        adiantamentos = cur.execute('SELECT * FROM adiantamentos WHERE cliente_id = (SELECT id FROM clientes WHERE nome = ?)', (nome_cliente,))
+        adiantamentos = cur.fetchall()
+
+        ad = request.form.get('adiantamentos')
+        if ad != None:
+            liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))
+            if nome_cliente != None:
+                cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nome_cliente,))
+                cID = cur.fetchall()
+
+            cur.execute("DELETE FROM adiantamentos WHERE cliente_id=:idC AND valor=:vl", {'idC':cID[0]['id'], 'vl':ad})
+            con.commit()
+
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas, adiantamentos=adiantamentos)
 
 @app.route('/encerrar', methods=['POST'])
 @login_required
@@ -490,7 +505,7 @@ def adiantamentos():
     cliente = cur.fetchall()
 
     # query adiantamentos table
-    ad = cur.execute('SELECT * FROM adiantamentos')
+    ad = cur.execute('SELECT clientes.nome, adiantamentos.data, adiantamentos.valor FROM adiantamentos JOIN clientes ON adiantamentos.cliente_id=clientes.id;')
     ad = cur.fetchall()
 
     if request.method == "GET":
@@ -515,7 +530,7 @@ def adiantamentos():
         con.commit()
 
         # query adiantamentos table
-        ad = cur.execute('SELECT * FROM adiantamentos')
+        ad = cur.execute('SELECT clientes.nome, adiantamentos.data, adiantamentos.valor FROM adiantamentos JOIN clientes ON adiantamentos.cliente_id=clientes.id;')
         ad = cur.fetchall()
 
         return render_template('adiantamentos.html', cliente=cliente, adiantamento=ad)
@@ -537,7 +552,7 @@ def quitacao():
     cliente = cur.fetchall()
 
     # query adiantamentos table
-    ad = cur.execute('SELECT * FROM adiantamentos')
+    ad = cur.execute('SELECT clientes.nome, adiantamentos.data, adiantamentos.valor FROM adiantamentos JOIN clientes ON adiantamentos.cliente_id=clientes.id;')
     ad = cur.fetchall()
 
     if request.method == 'GET':
@@ -562,7 +577,7 @@ def quitacao():
         con.commit()
 
         # query adiantamentos table
-        ad = cur.execute('SELECT * FROM adiantamentos')
+        ad = cur.execute('SELECT clientes.nome, adiantamentos.data, adiantamentos.valor FROM adiantamentos JOIN clientes ON adiantamentos.cliente_id=clientes.id;')
         ad = cur.fetchall()
 
         return render_template('quitacao.html', cliente=cliente, adiantamento=ad)

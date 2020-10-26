@@ -6,10 +6,17 @@
 
 {% block main %} 
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
+        <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button> 
         <form action='bordero' method='POST'>
-            <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button>                   
+            <select class="form-control" name="adiantamentos">
+                <option disabled selected value>Adiantamentos</option>
+                {% for row in adiantamentos %}
+                    <option value="{{ row['valor'] }}">{{ row['valor'] }}</option>
+                {% endfor %}-->
+            </select>
+            <button type='submit' value='inclui' class='btn btn-sm btn-outline-secondary'>Baixar AD</button>              
         </form>
-        </select> 
+        
         <form action='encerrar' method='POST'>
             <button type='submit' value="print a div" class='btn btn-sm btn-outline-secondary'>Encerrar</button>                   
         </form>

@@ -35,7 +35,7 @@
                 <tbody>
                     {% for row in adiantamento %}
                         <tr>
-                            <td>{{ row['cliente_id'] }}</td>
+                            <td>{{ row['nome'] }}</td>
                             {% set lt = row['data'].split('-') %}
                             <td>{{ lt[2]+'/'+lt[1]+'/'+lt[0] }}</td>
                             <td>{{ row['valor'] }}</td>
