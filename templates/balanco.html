@@ -18,11 +18,11 @@
     </div>
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
         <div class='balanco' style='text-align: center;'>
-            <p> Saldo Banco: R$ {{ saldo }}<br>
+            <p> Saldo Banco: R$ {{ "{:,.2f}".format(saldo) }}<br>
                 <b>Contas a receber</b><br>
-                Cheques: R$ {{ cheques[0]["SUM(valor)"] }}<br>
-                Duplicatas: R$ {{ duplicatas[0]["SUM(valor)"] }}<br>
-                Adiantamentos: R$ {{ adiantamentos[0]["SUM(valor)"] }}<br>
+                Cheques: R$ {{ "{:,.2f}".format(cheques[0]["SUM(valor)"]) }}<br>
+                Duplicatas: R$ {{ "{:,.2f}".format(duplicatas[0]["SUM(valor)"]) }}<br>
+                Adiantamentos: R$ {{ "{:,.2f}".format(adiantamentos[0]["SUM(valor)"]) }}<br>
                 <b>Total: R$ {{ total }}</b>
                 </p>
         </div>          

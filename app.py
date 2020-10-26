@@ -608,7 +608,8 @@ def balanco():
     saldo = 0.00
 
     if request.method == 'GET':
-        return render_template('balanco.html', cheques=cheques, duplicatas=duplicatas, adiantamentos=adiantamentos, saldo=saldo)
+        total = 0.00
+        return render_template('balanco.html', cheques=cheques, duplicatas=duplicatas, adiantamentos=adiantamentos, saldo=saldo, total=total)
 
     else:
 
