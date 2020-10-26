@@ -261,6 +261,9 @@ def cancelar():
     cur.execute('DELETE FROM borderos')
     con.commit()
 
+    del session['nm_cliente']
+    del session['dt_negoc']
+
     return redirect('/')
 
         
@@ -370,6 +373,8 @@ def encerrar():
 
     con.commit()
     con.close()
+    del session['nm_cliente']
+    del session['dt_negoc']
     
     return redirect('/')
 
