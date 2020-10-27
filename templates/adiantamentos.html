@@ -10,14 +10,14 @@
             <form action='adiantamentos' method='POST'>
                 <div class='form-group'>
                     <!--Selection - Cliente-->
-                        <select class="form-control" name="cliente">
+                        <select title='Selecione o Cliente' alt='Selecione o Cliente' class="form-control" name="cliente" required>
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>  
-                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
-                        <input name='data' autofocus class='form-control' placeholder='Data do AD' type='date'>             
+                        <input title='Valor adiantado' alt='Valor adiantado' name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00' required>
+                        <input title='Data do adiantamento' alt='Data do adiantamento'name='data' autofocus class='form-control' placeholder='Data do AD' type='date' required>             
                 </div>
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Cadastrar</button>
             </form>

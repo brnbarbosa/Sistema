@@ -8,15 +8,14 @@
     <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
         <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button> 
         <form action='bordero' method='POST'>
-            <select class="form-control" name="adiantamentos">
+            <select title='Selecione o adiantamento' alt='Selecione o adiantamento'class="form-control" name="adiantamentos">
                 <option disabled selected value>Adiantamentos</option>
                 {% for row in adiantamentos %}
                     <option value="{{ row['valor'] }}">{{ row['valor'] }}</option>
                 {% endfor %}-->
             </select>
-            <button type='submit' value='inclui' class='btn btn-sm btn-outline-secondary'>Baixar AD</button>              
+            <button type='submit' value='inclui' class='btn btn-sm btn-outline-secondary'>Baixar AD</button>
         </form>
-        
         <form action='encerrar' method='POST'>
             <button type='submit' value="print a div" class='btn btn-sm btn-outline-secondary'>Encerrar</button>                   
         </form>
@@ -36,6 +35,7 @@
                     Prazo Médio:<br>
                     Tarifas: <br>
                     Fator: <br>
+                    Adiantamentos: <br>
                     <b>Líquido:</b></p>     
             
                 <p style='text-align: left;'> {{ "R${:,.2f}".format(total[0]["SUM(valor)"]) }}<br>
@@ -43,6 +43,7 @@
                     {{ p_medio }}<br>
                     {{ tarifas }}<br>
                     {{ "R${:,.2f}".format(fator[0]["SUM(fator)"]) }}<br>
+                    {{ ( ad ) }}<br>
                     <b>{{ "R${:,.2f}".format(li) }}</b></p>          
         </div>
         <div class='table-responsive'>

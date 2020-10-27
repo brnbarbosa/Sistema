@@ -10,14 +10,14 @@
             <form action='baixa' method='POST'>
                 <div class='form-group'>
                     <!--Selection - Cliente-->
-                        <select class="form-control" name="cliente">
+                        <select title='Selecione o cliente' alt='Selecione o cliente' class="form-control" name="cliente" required>
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>   
-                        <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
-                        <input name='dt_baixa' autofocus class='form-control' placeholder='Data da Baixa' type='date'>                   
+                        <input title='Número do título a ser baixado' alt='Número do título a ser baixado'name='titulo' autofocus class='form-control' placeholder='Título' type='text' required>
+                        <input title='Data da baixa' alt='Data da baixa' name='dt_baixa' autofocus class='form-control' placeholder='Data da Baixa' type='date' required>                   
                 </div>
                 <button type='submit' id='baixa' class='btn btn-sm btn-outline-secondary'>Baixar</button>
             </form>

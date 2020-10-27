@@ -320,6 +320,9 @@ def bordero():
     cliente = cur.execute('SELECT * FROM clientes WHERE nome = ?', (borderos[0]['cliente'],))
     cliente = cur.fetchone()
 
+    #session['ad'] = 0.00
+    #session['pendencia'] = 0.00
+
     liq = (li[0]['SUM(liquido)'] - tarifas)
 
     if request.method == 'GET':
@@ -330,17 +333,18 @@ def bordero():
         adiantamentos = cur.execute('SELECT * FROM adiantamentos WHERE cliente_id = (SELECT id FROM clientes WHERE nome = ?)', (nome_cliente,))
         adiantamentos = cur.fetchall()
 
+        if nome_cliente != None:
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nome_cliente,))
+            cID = cur.fetchall()
+
         ad = request.form.get('adiantamentos')
+        
         if ad != None:
-            liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))
-            if nome_cliente != None:
-                cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nome_cliente,))
-                cID = cur.fetchall()
-
+            liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))            
             cur.execute("DELETE FROM adiantamentos WHERE cliente_id=:idC AND valor=:vl", {'idC':cID[0]['id'], 'vl':ad})
-            con.commit()
+            con.commit() 
 
-        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas, adiantamentos=adiantamentos)
+        return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas, adiantamentos=adiantamentos, ad=ad)
 
 @app.route('/encerrar', methods=['POST'])
 @login_required

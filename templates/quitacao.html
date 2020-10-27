@@ -10,14 +10,14 @@
             <form action='quitacao' method='POST'>
                 <div class='form-group'>
                     <!--Selection - Cliente-->
-                        <select class="form-control" name="cliente">
+                        <select class="form-control" name="cliente" required title='Selecione o cliente' alt='Selecione o cliente'>
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>   
-                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
-                        <input name='data' autofocus class='form-control' placeholder='Data do AD' type='date'>                  
+                        <input title='Insira o valor do adiantamento' alt='Insira o valor do adiantamento'name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00' required>
+                        <input title='Insira a data adiantamento' alt='Insira a data do adiantamento'name='data' autofocus class='form-control' placeholder='Data do AD' type='date' required>                  
                 </div>
                 <button type='submit' id='baixa' class='btn btn-sm btn-outline-secondary'>Quitar</button>
             </form>

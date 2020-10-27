@@ -10,13 +10,13 @@
             <form action='preparacao' method='POST'>
                     <div class='form-group'>
                         <!--Selection - Cliente-->
-                            <select class="form-control" name="cliente">
+                            <select title="Selecione o Cliente"  alt='Selecione o Cliente' class="form-control" name="cliente" required>
                                 <option disabled selected value>Cliente</option>
                             {% for row in cliente %}
                                 <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                             {% endfor %}
                             </select>
-                            <input name='dt_negoc' autofocus class='form-control' placeholder='Data de Negociação' type='date'>
+                            <input title="Data de Negociação" alt="Data de Negociação" name='dt_negoc' autofocus class='form-control' placeholder='Data de Negociação' type='date' required>
                     </div>        
                     <button type='submit' class='btn btn-sm btn-outline-secondary'>Prosseguir</button>                       
                 </form>

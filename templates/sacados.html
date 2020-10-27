@@ -11,10 +11,10 @@
         <div class='d-flex justify-content-between flex-warp flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom'>
             <form action='sacados' method='POST'>
                 <div class='form-group'>
-                    <input name='nome' autofocus class='form-control' placeholder='Nome' type='text'>
-                    <input name='cep' autofocus class='form-control' placeholder='CEP' type='number'>
-                    <input name='endereco' autofocus class='form-control' placeholder='Endereço' type='text'>
-                    <input name='cnpj' autofocus class='form-control' placeholder='CNPJ' type='text'>
+                    <input name='nome' autofocus class='form-control' placeholder='Nome' type='text' required title='Insira o nome/razão social do sacado' alt='Insira o nome/razão social do sacado'>
+                    <input name='cep' autofocus class='form-control' placeholder='CEP' type='number' title='Insira o cep do sacado' alt='Insira o cep do sacado'>
+                    <input name='endereco' autofocus class='form-control' placeholder='Endereço' type='text' title='Insira o endereço do sacado' alt='Insira o endereço do sacado'>
+                    <input name='cnpj' autofocus class='form-control' placeholder='CNPJ' type='text' title='Insira o cpf/cnpj do sacado' alt='Insira o cpf/cnpj do sacado'>
                 </div>
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Cadastrar</button>
             </form>

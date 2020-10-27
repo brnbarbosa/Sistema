@@ -10,32 +10,32 @@
             <form action='relatorios' method='POST'>
                 <div class='form-group'>
                     <!--Selection - Cliente-->
-                        <select class="form-control" name="cliente">
+                        <select class="form-control" name="cliente" title='Relatório por cliente' alt='Relatório por Cliente'>
                             <option disabled selected value>Cliente</option>
                         {% for row in cliente %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>   
                     <!--Selection - Sacado-->
-                        <select class="form-control" name="sacado">
+                        <select class="form-control" name="sacado" title='Relatório por sacado' alt='Relatório por sacado'>
                             <option disabled selected value>Sacado</option>
                         {% for row in sacado %}
                             <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
                         {% endfor %}
                         </select>
-                        <select class='form-control' name='tipo'>
+                        <select class='form-control' name='tipo' title='Relatório por tipo' alt='Relatório por tipo'>
                             <option select value>Tipo</option>
                             <option value='cheque'>Cheque</option>
                             <option value='duplicata'>Duplicata</option>
                         </select>
-                        <select class='form-control' name='status'>
+                        <select class='form-control' name='status' title='Relatório por status' alt='Relatório por status'>
                             <option select value>Status</option>
                             <option value='Em Aberto'>Em Aberto</option>
                             <option value='Vencido'>Vencido</option>
                             <option value='Quitado'>Quitado</option>
                         </select>
-                        <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
-                        <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
+                        <input name='titulo' autofocus class='form-control' placeholder='Título' type='text' title='Relatório por número do título' alt='Relatório por número do título'>
+                        <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date' title='Relatório por vencimento' alt='Relatório por vencimento'>
                 </div>
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Procurar</button>
             </form>

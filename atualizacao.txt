@@ -2,3 +2,8 @@
  - Unico comando para inclusão do cliente no bordero;
  - Opção de baixa do adiantamento no campo de operações;
  - Nome na planilha de adiantamentos e quitação;
+
+27-10-20
+- hover nos formulários
+- Obrigatoriedade de preenchimento
+- Adiantamentos na para opção de baixa no borderô

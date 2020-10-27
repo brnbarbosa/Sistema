@@ -9,26 +9,11 @@
         <h3>Operação</h3>
             <form action='operacao' method='POST'>
                 <div class='form-group'>
-                    <!--Selection - Cliente
-                        <select class="form-control" name="cliente">
-                            <option disabled selected value>Cliente</option>
-                        {% for row in cliente %}
-                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
-                        {% endfor %}
-                        </select>-->
-                        <!--<p>Data de negociação:</p><input name='dt_negoc' autofocus class='form-control' placeholder='Data de Negociação' type='date'>-->   
-                    <!--Selection - Sacado
-                        <select class="form-control" name="sacado">
-                            <option disabled selected value>Sacado</option>
-                        {% for row in sacado %}
-                            <option value="{{ row['nome'] }}">{{ row['nome'] }}</option>
-                        {% endfor %}
-                        </select>-->
-                        <input name='sacado' autofocus class='form-control' placeholder='Sacado' type='text'>
-                        <input name='titulo' autofocus class='form-control' placeholder='Título' type='text'>
-                        <input name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00'>
-                        <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date'>
-                        <select class='form-control' name='tipo'>
+                        <input title='Insira o nome/razão social do sacado' alt='Insira o nome/razão social do sacado' name='sacado' autofocus class='form-control' placeholder='Sacado' type='text' required>
+                        <input title='Insira o número do título' alt='Insira o número do título'name='titulo' autofocus class='form-control' placeholder='Título' type='text' required>
+                        <input title='Insira o valor do título' alt='Insira o valor do título'name='valor' autofocus class='form-control' placeholder='Valor' type='number' step='0.01' data-mask='000.000,00' required>
+                        <input title='Insira o vencimento do título' alt='Insira o vencimento do título' name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date' required>
+                        <select class='form-control' name='tipo' required title='Selecione o tipo do título' alt='Selecione o tipo do título'>
                             <option disabled select value>Tipo</option>
                             <option value='cheque'>Cheque</option>
                             <option value='duplicata'>Duplicata</option>
