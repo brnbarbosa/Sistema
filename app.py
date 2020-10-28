@@ -419,7 +419,9 @@ def relatorios():
                 "tipo": "'" + request.form.get('tipo') + "'",
                 "status": "'" + request.form.get('status') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
-                "vencimento": "'" + str(request.form.get('vencimento')) + "'"
+                "vencimento": "'" + str(request.form.get('vencimento')) + "'",
+                "venc1": "'" + str(request.form.get('venc1')) + "'",
+                "venc2": "'" + str(request.form.get('venc2')) + "'"
         }
 
         # get all user inputs
