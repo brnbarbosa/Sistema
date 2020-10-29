@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = 'brn.db'
+DATABASE = "/home/brnbarbosa/mysite/brn.db"
 
 def getApp():
     return app
@@ -237,12 +237,19 @@ def operacao():
 
         # liquido of operation
         liquido = float(lqd(fator, valor))
- 
-        # insert all that information in a support table
-        cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
-                    (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), dt_negoc, tipo, taxa[0]['taxa'], fator, liquido, dias))
 
-        con.commit()
+        test = cur.execute('SELECT titulo FROM borderos WHERE titulo=:t', {'t':titulo,})
+        test = cur.fetchone()
+
+        if test == None:
+            # insert all that information in a support table
+            cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
+                        (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), dt_negoc, tipo, taxa[0]['taxa'], fator, liquido, dias))
+            con.commit()
+        else:
+            cur.execute('UPDATE borderos SET cliente=:c, sacado=:s, titulo=:ti, valor=:va, vencimento=:v, dt_negoc=:dn, tipo=:tp, taxa=:tx, fator=:f, liquido=:l, prazo=:p WHERE titulo=:tit', 
+                        {'c':nm_cliente, 's':nm_sacado, 'ti':titulo, 'va':valor, 'v':request.form.get('vencimento'), 'dn':dt_negoc, 'tp':tipo, 'tx':taxa[0]['taxa'], 'f':fator, 'l':liquido, 'p':dias, 'tit':titulo,})
+            con.commit()
 
         return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
 
@@ -320,9 +327,6 @@ def bordero():
     cliente = cur.execute('SELECT * FROM clientes WHERE nome = ?', (borderos[0]['cliente'],))
     cliente = cur.fetchone()
 
-    #session['ad'] = 0.00
-    #session['pendencia'] = 0.00
-
     liq = (li[0]['SUM(liquido)'] - tarifas)
 
     if request.method == 'GET':
@@ -342,7 +346,9 @@ def bordero():
         if ad != None:
             liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))            
             cur.execute("DELETE FROM adiantamentos WHERE cliente_id=:idC AND valor=:vl", {'idC':cID[0]['id'], 'vl':ad})
-            con.commit() 
+            con.commit()
+        else:
+            ad = 0.00 
 
         return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas, adiantamentos=adiantamentos, ad=ad)
 
@@ -420,8 +426,6 @@ def relatorios():
                 "status": "'" + request.form.get('status') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
                 "vencimento": "'" + str(request.form.get('vencimento')) + "'",
-                "venc1": "'" + str(request.form.get('venc1')) + "'",
-                "venc2": "'" + str(request.form.get('venc2')) + "'"
         }
 
         # get all user inputs
