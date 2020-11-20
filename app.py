@@ -17,7 +17,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 app = Flask(__name__)
 
 DATABASE = "/home/brnbarbosa/mysite/brn.db"
-
+# "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
 
@@ -313,10 +313,13 @@ def bordero():
 
     tarifas = 10 + (n_titulos[0]['COUNT(*)'] * 5)
     
-    dias = cur.execute('SELECT SUM(prazo) FROM borderos')
+    dias = cur.execute('SELECT SUM(DISTINCT prazo) FROM borderos')
     dias = cur.fetchall()
 
-    p_medio = prazo_medio(n_titulos[0]["COUNT(*)"], dias[0]["SUM(prazo)"])
+    distc_titulos = cur.execute('SELECT count(DISTINCT prazo) FROM borderos')
+    distc_titulos = cur.fetchall()
+    # USAR COUNT DISTINCT
+    p_medio = prazo_medio(distc_titulos[0]['count(DISTINCT prazo)'], dias[0]["SUM(DISTINCT prazo)"])
 
     fator = cur.execute('SELECT SUM(fator) FROM borderos')
     fator = cur.fetchall()
@@ -409,7 +412,7 @@ def relatorios():
     sacado = cur.fetchall()
 
     # query títulos table 
-    tit = cur.execute('SELECT * FROM titulo')
+    tit = cur.execute('SELECT * FROM titulo ORDER BY vencimento')
     tit = cur.fetchall()
 
     # GET
@@ -453,6 +456,8 @@ def relatorios():
                 
         if where:
             sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
+        
+        sql = sql + " ORDER BY vencimento"
 
         titulos = cur.execute(sql)
         titulos = cur.fetchall()

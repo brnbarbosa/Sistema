@@ -26,7 +26,7 @@ def prazo_medio(n_titulos, dias):
     return (dias / n_titulos)
 
 def factor(taxa, dias, valor):
-    expo = dias / 30
+    expo = math.floor((dias / 30)*100)/100
     base = (taxa / 100) + 1
     factor = (valor * pow(base, expo)) - valor
     return factor
