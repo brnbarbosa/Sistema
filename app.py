@@ -651,6 +651,77 @@ def balanco():
 
         return render_template('balanco.html', cheques=cheques, duplicatas=duplicatas, adiantamentos=adiantamentos, saldo=saldo, total=total)
 
+@app.route('/manutencao', methods=['GET', 'POST'])
+@login_required
+def manutencao():
+    # connect database
+    con = sqlite3.connect(DATABASE)
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # query cliente table to list all clientes
+    cliente = cur.execute('SELECT nome FROM clientes')
+    cliente = cur.fetchall()
+
+    # query sacados table to list all sacados
+    sacado = cur.execute('SELECT nome FROM sacados')
+    sacado = cur.fetchall()
+
+    # query títulos table 
+    tit = cur.execute('SELECT * FROM titulo ORDER BY vencimento')
+    tit = cur.fetchall()
+
+    # GET
+    if request.method == "GET":
+        return render_template('/manutencao.html', cliente=cliente, sacado=sacado, titulo=tit)
+
+    # POST
+    else:
+
+        inputs = {
+                "cliente_id": None,
+                "sacado_id": None,
+                "tipo": "'" + request.form.get('tipo') + "'",
+                "status": "'" + request.form.get('status') + "'",
+                "titulo": "'" + request.form.get('titulo') + "'",
+                "vencimento": "'" + str(request.form.get('vencimento')) + "'",
+        }
+
+        # get all user inputs
+        nm_cli = request.form.get('cliente')
+        if nm_cli != None:
+            nm_cli = nm_cli.upper()
+            cID = cur.execute('SELECT id FROM clientes WHERE nome = ?', (nm_cli,))
+            cID = cur.fetchall()
+            inputs['cliente_id'] = cID[0]['id']
+
+        nm_sac = request.form.get('sacado')
+        if nm_sac != None:
+            nm_sac = nm_sac.upper()
+            sID = cur.execute('SELECT id FROM sacados WHERE nome = ?', (nm_sac,))
+            sID = cur.fetchall()
+            inputs['sacado_id'] = sID[0]['id']
+
+
+        sql = 'SELECT * FROM titulo'
+        where =[]
+
+        for key in inputs:
+            if inputs[key] != None and inputs[key] != "''" and inputs[key] != '':
+                where.append(f'{key} = {inputs[key]}')
+                
+        if where:
+            sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
+        
+        sql = sql + " ORDER BY vencimento"
+
+        titulos = cur.execute(sql)
+        titulos = cur.fetchall()
+                
+        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos)
+
 
 
 # ----- FIRST PAGE ------ #

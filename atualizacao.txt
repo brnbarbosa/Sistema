@@ -7,3 +7,13 @@
 - hover nos formulários
 - Obrigatoriedade de preenchimento
 - Adiantamentos na para opção de baixa no borderô
+
+19-11-20
+- correção do prazo medio
+- correção do calculo de juros desconsiderando após segunda casa decimal
+- correção do banco de dados, remoção dos itens de teste
+** incluir na próxima atualizacão botão para excluir e correção
+
+30-11-20
+- correção banco de dados
+- inclusão aba manutenção ( Por fazer )
