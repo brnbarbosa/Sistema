@@ -53,11 +53,10 @@ def index():
     ttlos = cur.fetchall()
 
     for row in ttlos:
-        if row['status'] == 'Em Aberto' and datetime.strptime(row['vencimento'], '%Y-%m-%d').date() < date.today():
-            cur.execute("UPDATE titulo SET status = 'Vencido' WHERE vencimento = ?", (row['vencimento'],))
-            con.commit()
-
-    con.close()
+        if row['status'] == 'Em Aberto' and row['status'] != 'Quitado':
+            if datetime.strptime(row['vencimento'], '%Y-%m-%d').date() < date.today():
+                cur.execute("UPDATE titulo SET status = 'Vencido' WHERE vencimento = ?", (row['vencimento'],))
+                con.commit()
 
     return render_template('index.html')
 
@@ -412,7 +411,7 @@ def relatorios():
     sacado = cur.fetchall()
 
     # query títulos table 
-    tit = cur.execute('SELECT * FROM titulo ORDER BY vencimento')
+    tit = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
     tit = cur.fetchall()
 
     # GET
@@ -670,7 +669,7 @@ def manutencao():
     sacado = cur.fetchall()
 
     # query títulos table 
-    tit = cur.execute('SELECT * FROM titulo ORDER BY vencimento')
+    tit = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
     tit = cur.fetchall()
 
     # GET
@@ -705,7 +704,7 @@ def manutencao():
             inputs['sacado_id'] = sID[0]['id']
 
 
-        sql = 'SELECT * FROM titulo'
+        sql = 'UPDATE titulo SET '
         where =[]
 
         for key in inputs:
@@ -819,10 +818,3 @@ def logout():
 
     # redirect user to login form
     return redirect("/")
-
-
-
-        
-    
-            
-

@@ -17,3 +17,7 @@
 30-11-20
 - correção banco de dados
 - inclusão aba manutenção ( Por fazer )
+
+01-12-20
+- correção banco de dados
+- reforço no if da definição do vencido (acompanhar)
