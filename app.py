@@ -407,7 +407,7 @@ def relatorios():
     cliente = cur.fetchall()
 
     # query sacados table to list all sacados
-    sacado = cur.execute('SELECT nome FROM sacados')
+    sacado = cur.execute('SELECT nome FROM sacados ORDER BY nome')
     sacado = cur.fetchall()
 
     # query títulos table 
@@ -665,7 +665,7 @@ def manutencao():
     cliente = cur.fetchall()
 
     # query sacados table to list all sacados
-    sacado = cur.execute('SELECT nome FROM sacados')
+    sacado = cur.execute('SELECT nome FROM sacados ORDER BY nome')
     sacado = cur.fetchall()
 
     # query títulos table 
@@ -683,7 +683,6 @@ def manutencao():
                 "cliente_id": None,
                 "sacado_id": None,
                 "tipo": "'" + request.form.get('tipo') + "'",
-                "status": "'" + request.form.get('status') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
                 "vencimento": "'" + str(request.form.get('vencimento')) + "'",
         }
@@ -712,14 +711,14 @@ def manutencao():
                 where.append(f'{key} = {inputs[key]}')
                 
         if where:
-            sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
+            sql = '{} {}'.format(sql, ' AND '.join(where,))
         
-        sql = sql + " ORDER BY vencimento"
+        #sql = sql + (f' WHERE titulo = {inputs['titulo']} AND cliente_id = {inputs['cliente_id']} AND sacado_id = {inputs['sacado_id']}')
 
-        titulos = cur.execute(sql)
-        titulos = cur.fetchall()
+        cur.execute(sql)
+        cur.commit()
                 
-        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos)
+        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=tit)
 
 
 

@@ -21,3 +21,7 @@
 01-12-20
 - correção banco de dados
 - reforço no if da definição do vencido (acompanhar)
+
+22-12-20
+- correcao banco de dados
+- evoluindo na parte de manutenção
