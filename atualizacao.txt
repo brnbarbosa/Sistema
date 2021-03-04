@@ -25,3 +25,7 @@
 22-12-20
 - correcao banco de dados
 - evoluindo na parte de manutenção
+
+03-03-21
+- inclusão do botão imprimir
+- inclusão do totais em relatórios

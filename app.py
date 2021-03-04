@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "/home/brnbarbosa/mysite/brn.db"
+DATABASE = "brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
@@ -458,10 +458,11 @@ def relatorios():
         
         sql = sql + " ORDER BY vencimento"
 
-        titulos = cur.execute(sql)
-        titulos = cur.fetchall()
-                
-        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos)
+        titulos_busca = cur.execute(sql)
+        titulos_busca = cur.fetchall()
+
+              
+        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos_busca)
 
 @app.route('/baixa', methods=['GET', 'POST'])
 @login_required
