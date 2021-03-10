@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "brn.db"
+DATABASE = "/home/brnbarbosa/mysite/brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
@@ -94,11 +94,11 @@ def sacados():
         if nm_testing == None:
              # insert new 'sacado' to db
             cur.execute("INSERT INTO sacados (nome, cep, endereço, cnpj) VALUES (?,?,?,?)",(nm, cp, end, cnpj) )
-            con.commit() 
+            con.commit()
         else:
             cur.execute('UPDATE sacados SET cep=:c, endereço=:e, cnpj=:j WHERE nome=:n;', {'c':cp, 'e':end, 'j':cnpj, 'n':nm,})
-            con.commit() 
-                       
+            con.commit()
+
 
         return redirect('/sacados')
 
@@ -139,10 +139,10 @@ def clientes():
         if nm_testing == None:
              # insert new 'dliente' to db
             cur.execute("INSERT INTO clientes (nome, cep, endereço, cnpj, taxa) VALUES (?,?,?,?,?)",(inputs['nm'], inputs['cp'], inputs['end'], inputs['cnpj'], inputs['taxa']) )
-            con.commit() 
+            con.commit()
         else:
             cur.execute('UPDATE clientes SET cep=:c, endereço=:e, cnpj=:j, taxa=:tx WHERE nome=:n;', {'c':inputs['cp'], 'e':inputs['end'], 'j':inputs['cnpj'], 'tx':inputs['taxa'], 'n':inputs['nm'],})
-            con.commit() 
+            con.commit()
 
         return redirect('/clientes')
 
@@ -190,13 +190,13 @@ def operacao():
     sacado = cur.execute('SELECT nome FROM sacados')
     sacado = cur.fetchall()
 
-    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.execute('SELECT * FROM borderos')
     borderos = cur.fetchall()
 
     # GET
     if request.method == 'GET':
         return render_template('operacao.html', sacado=sacado, cliente=cliente, bordero=borderos)
-    
+
     # POST
     else:
         # get all user inputs
@@ -219,7 +219,7 @@ def operacao():
 
         # valor
         valor = float(request.form.get('valor'))
-        
+
         # vencimento and calculating total days between today and vencimento date
         venc = datetime.strptime(request.form.get('vencimento'), '%Y-%m-%d')
         dias = day(venc, dt_negoc)
@@ -242,11 +242,11 @@ def operacao():
 
         if test == None:
             # insert all that information in a support table
-            cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
+            cur.execute('INSERT INTO borderos (cliente, sacado, titulo, valor, vencimento, dt_negoc, tipo, taxa, fator, liquido, prazo) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
                         (nm_cliente, nm_sacado, titulo, valor, request.form.get('vencimento'), dt_negoc, tipo, taxa[0]['taxa'], fator, liquido, dias))
             con.commit()
         else:
-            cur.execute('UPDATE borderos SET cliente=:c, sacado=:s, titulo=:ti, valor=:va, vencimento=:v, dt_negoc=:dn, tipo=:tp, taxa=:tx, fator=:f, liquido=:l, prazo=:p WHERE titulo=:tit', 
+            cur.execute('UPDATE borderos SET cliente=:c, sacado=:s, titulo=:ti, valor=:va, vencimento=:v, dt_negoc=:dn, tipo=:tp, taxa=:tx, fator=:f, liquido=:l, prazo=:p WHERE titulo=:tit',
                         {'c':nm_cliente, 's':nm_sacado, 'ti':titulo, 'va':valor, 'v':request.form.get('vencimento'), 'dn':dt_negoc, 'tp':tipo, 'tx':taxa[0]['taxa'], 'f':fator, 'l':liquido, 'p':dias, 'tit':titulo,})
             con.commit()
 
@@ -272,7 +272,7 @@ def cancelar():
 
     return redirect('/')
 
-        
+
 @app.route('/table', methods=['GET'])
 @login_required
 def table():
@@ -284,7 +284,7 @@ def table():
     # create a cursor
     cur = con.cursor()
 
-    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.execute('SELECT * FROM borderos')
     borderos = cur.fetchall()
 
     return render_template('/table.html', borderos=borderos)
@@ -301,7 +301,7 @@ def bordero():
     # create a cursor
     cur = con.cursor()
 
-    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.execute('SELECT * FROM borderos')
     borderos = cur.fetchall()
 
     total = cur.execute('SELECT SUM(valor) FROM borderos')
@@ -311,7 +311,7 @@ def bordero():
     n_titulos = cur.fetchall()
 
     tarifas = 10 + (n_titulos[0]['COUNT(*)'] * 5)
-    
+
     dias = cur.execute('SELECT SUM(DISTINCT prazo) FROM borderos')
     dias = cur.fetchall()
 
@@ -344,13 +344,13 @@ def bordero():
             cID = cur.fetchall()
 
         ad = request.form.get('adiantamentos')
-        
+
         if ad != None:
-            liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))            
+            liq = (li[0]['SUM(liquido)'] - tarifas - float(ad))
             cur.execute("DELETE FROM adiantamentos WHERE cliente_id=:idC AND valor=:vl", {'idC':cID[0]['id'], 'vl':ad})
             con.commit()
         else:
-            ad = 0.00 
+            ad = 0.00
 
         return render_template('/bordero.html', borderos=borderos, total=total, n_titulos=n_titulos, p_medio=p_medio, fator=fator, li=liq, cliente=cliente, tarifas=tarifas, adiantamentos=adiantamentos, ad=ad)
 
@@ -365,7 +365,7 @@ def encerrar():
     # create a cursor
     cur = con.cursor()
 
-    borderos = cur.execute('SELECT * FROM borderos') 
+    borderos = cur.execute('SELECT * FROM borderos')
     borderos = cur.fetchall()
 
     # insert all data in Titulos
@@ -387,7 +387,7 @@ def encerrar():
     con.close()
     del session['nm_cliente']
     del session['dt_negoc']
-    
+
     return redirect('/')
 
 
@@ -410,7 +410,7 @@ def relatorios():
     sacado = cur.execute('SELECT nome FROM sacados ORDER BY nome')
     sacado = cur.fetchall()
 
-    # query títulos table 
+    # query títulos table
     tit = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
     tit = cur.fetchall()
 
@@ -452,16 +452,16 @@ def relatorios():
         for key in inputs:
             if inputs[key] != None and inputs[key] != "''" and inputs[key] != '':
                 where.append(f'{key} = {inputs[key]}')
-                
+
         if where:
             sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
-        
+
         sql = sql + " ORDER BY vencimento"
 
         titulos_busca = cur.execute(sql)
         titulos_busca = cur.fetchall()
 
-              
+
         return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=titulos_busca)
 
 @app.route('/baixa', methods=['GET', 'POST'])
@@ -475,12 +475,12 @@ def baixa():
     # create a cursor
     cur = con.cursor()
 
-    
+
     # query cliente table to list all clientes
     cliente = cur.execute('SELECT nome FROM clientes')
     cliente = cur.fetchall()
 
-    # query títulos table 
+    # query títulos table
     titlo = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
     titlo = cur.fetchall()
 
@@ -566,7 +566,7 @@ def quitacao():
     # create a cursor
     cur = con.cursor()
 
-    
+
     # query cliente table to list all clientes
     cliente = cur.execute('SELECT nome FROM clientes')
     cliente = cur.fetchall()
@@ -669,7 +669,7 @@ def manutencao():
     sacado = cur.execute('SELECT nome FROM sacados ORDER BY nome')
     sacado = cur.fetchall()
 
-    # query títulos table 
+    # query títulos table
     tit = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
     tit = cur.fetchall()
 
@@ -710,15 +710,15 @@ def manutencao():
         for key in inputs:
             if inputs[key] != None and inputs[key] != "''" and inputs[key] != '':
                 where.append(f'{key} = {inputs[key]}')
-                
+
         if where:
             sql = '{} {}'.format(sql, ' AND '.join(where,))
-        
+
         #sql = sql + (f' WHERE titulo = {inputs['titulo']} AND cliente_id = {inputs['cliente_id']} AND sacado_id = {inputs['sacado_id']}')
 
         cur.execute(sql)
         cur.commit()
-                
+
         return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=tit)
 
 
@@ -733,7 +733,7 @@ def login():
 
     # create cursor
     cur = con.cursor()
-    
+
     # login user
     # GET
     if request.method == 'GET':
@@ -748,7 +748,7 @@ def login():
         # blank user and password
         if not request.form.get('user'):
             return render_template('login.html')
-        
+
         elif not request.form.get('password'):
             return render_template('login.html')
 
@@ -761,7 +761,7 @@ def login():
         # ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return render_template('login.html')
-        
+
         # remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
@@ -791,13 +791,13 @@ def register():
             user = request.form.get('user')
             psswd = generate_password_hash(request.form.get('password'))
 
-            # connect to db    
+            # connect to db
             with sqlite3.connect(DATABASE) as con:
                 cur = con.cursor()
 
                 # insert new user to db
                 cur.execute("INSERT INTO usuario (nome, hash) VALUES (?,?)",(user, psswd) )
-            
+
                 con.commit()
 
         except:
@@ -806,7 +806,7 @@ def register():
         finally:
             # return to login
             return redirect('/login')
-        
+
         # close connection
         con.close()
 
