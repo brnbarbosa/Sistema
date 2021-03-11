@@ -44,9 +44,10 @@
                     {{ p_medio }}<br>
                     {{ tarifas }}<br>
                     {{ "R${:,.2f}".format(fator[0]["SUM(fator)"]) }}<br>
-                    {{ "RS{:,.2f}".format((total[0]["SUM(valor)"] * 0.0038) + ((total[0]["SUM(valor)"] * 0.000082) * p_medio)) }} <br>
+                    {% set valor_iof = (total[0]["SUM(valor)"] * 0.0038) + ((total[0]["SUM(valor)"] * 0.000082) * p_medio) %}
+                    {{ "RS{:,.2f}".format(valor_iof) }} <br>
                     {{  ad }}<br>
-                    <b>{{ "R${:,.2f}".format(li) }}</b></p>          
+                    <b>{{ "R${:,.2f}".format(li - valor_iof) }}</b></p>          
         </div>
         <div class='table-responsive'>
             <table class='table table-striped table-sm'>

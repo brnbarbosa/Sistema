@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "/home/brnbarbosa/mysite/brn.db"
+DATABASE = "brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
