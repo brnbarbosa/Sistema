@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "brn.db"
+DATABASE = "/home/brnbarbosa/mysite/brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
@@ -614,11 +614,11 @@ def balanco():
     cur = con.cursor()
 
     # query cheques and em aberto
-    cheques = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "cheque" AND status = "Em Aberto" OR status = "Vencido";')
+    cheques = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "cheque" AND status != "Quitado";')
     cheques = cur.fetchall()
 
     # query duplicatas and em aberto
-    duplicatas = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "duplicata" AND status = "Em Aberto" OR status = "Vencido";')
+    duplicatas = cur.execute('SELECT SUM(valor) FROM titulo WHERE tipo = "duplicata" AND status != "Quitado";')
     duplicatas = cur.fetchall()
 
     # query adiantamentos
