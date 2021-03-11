@@ -35,6 +35,7 @@
                     Prazo Médio:<br>
                     Tarifas: <br>
                     Fator: <br>
+                    IOF: <br>
                     Adiantamentos: <br>
                     <b>Líquido:</b></p>     
             
@@ -43,6 +44,7 @@
                     {{ p_medio }}<br>
                     {{ tarifas }}<br>
                     {{ "R${:,.2f}".format(fator[0]["SUM(fator)"]) }}<br>
+                    {{ "RS{:,.2f}".format((total[0]["SUM(valor)"] * 0.0038) + ((total[0]["SUM(valor)"] * 0.000082) * p_medio)) }} <br>
                     {{  ad }}<br>
                     <b>{{ "R${:,.2f}".format(li) }}</b></p>          
         </div>

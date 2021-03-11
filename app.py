@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "/home/brnbarbosa/mysite/brn.db"
+DATABASE = "brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
@@ -669,13 +669,9 @@ def manutencao():
     sacado = cur.execute('SELECT nome FROM sacados ORDER BY nome')
     sacado = cur.fetchall()
 
-    # query títulos table
-    tit = cur.execute('SELECT * FROM titulo WHERE status != "Quitado" ORDER BY vencimento')
-    tit = cur.fetchall()
-
     # GET
     if request.method == "GET":
-        return render_template('/manutencao.html', cliente=cliente, sacado=sacado, titulo=tit)
+        return render_template('/manutencao.html', cliente=cliente, sacado=sacado)
 
     # POST
     else:
@@ -704,7 +700,7 @@ def manutencao():
             inputs['sacado_id'] = sID[0]['id']
 
 
-        sql = 'UPDATE titulo SET '
+        sql = 'SELECT * FROM titulo'
         where =[]
 
         for key in inputs:
@@ -712,14 +708,32 @@ def manutencao():
                 where.append(f'{key} = {inputs[key]}')
 
         if where:
-            sql = '{} {}'.format(sql, ' AND '.join(where,))
+            sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
 
-        #sql = sql + (f' WHERE titulo = {inputs['titulo']} AND cliente_id = {inputs['cliente_id']} AND sacado_id = {inputs['sacado_id']}')
+        sql = sql + " ORDER BY vencimento"
 
-        cur.execute(sql)
-        cur.commit()
+        titulo_localizado = cur.execute(sql)
+        titulo_localizado = cur.fetchall()
 
-        return render_template('/relatorios.html', cliente=cliente, sacado=sacado, titulo=tit)
+        session['titulo_localizado'] = titulo_localizado
+
+        return render_template('/manutencao.html', cliente=cliente, sacado=sacado, titulo=titulo_localizado)
+
+@app.route('/correcao', methods=['GET', 'Post'])
+def correcao():
+
+        # connect database
+    con = sqlite3.connect(DATABASE)
+    con.row_factory = sqlite3.Row
+
+    # create a cursor
+    cur = con.cursor()
+
+    # GET
+    if request.method == "GET":
+        return render_template('/correcao.html', titulo=session['titulo_localizado'])
+
+
 
 
 

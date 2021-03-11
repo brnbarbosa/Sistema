@@ -29,3 +29,6 @@
 03-03-21
 - inclusão do botão imprimir
 - inclusão do totais em relatórios
+
+10-03-21
+- inclusão do iof
