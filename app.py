@@ -16,7 +16,7 @@ from helper import login_required, day, prazo_medio, factor, lqd
 
 app = Flask(__name__)
 
-DATABASE = "/home/brnbarbosa/mysite/brn.db"
+DATABASE = "brn.db"
 # "/home/brnbarbosa/mysite/brn.db"
 def getApp():
     return app
@@ -427,7 +427,11 @@ def relatorios():
                 "tipo": "'" + request.form.get('tipo') + "'",
                 "status": "'" + request.form.get('status') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
-                "vencimento": "'" + str(request.form.get('vencimento')) + "'",
+        }
+
+        lista_de_vencimentos = {
+                "vencimento_inicial": "'" + str(request.form.get('vencimento_inicial')) + "'",
+                "vencimento_final": "'" + str(request.form.get('vencimento_final')) + "'",
         }
 
         # get all user inputs
@@ -455,8 +459,9 @@ def relatorios():
 
         if where:
             sql = '{} WHERE {}'.format(sql, ' AND '.join(where,))
-
-        sql = sql + " ORDER BY vencimento"
+            sql = sql + f" AND vencimento BETWEEN {lista_de_vencimentos['vencimento_inicial']} AND {lista_de_vencimentos['vencimento_final']} ORDER BY vencimento"
+        else:
+            sql = sql + f" WHERE vencimento BETWEEN {lista_de_vencimentos['vencimento_inicial']} AND {lista_de_vencimentos['vencimento_final']} ORDER BY vencimento"
 
         titulos_busca = cur.execute(sql)
         titulos_busca = cur.fetchall()
@@ -679,9 +684,7 @@ def manutencao():
         inputs = {
                 "cliente_id": None,
                 "sacado_id": None,
-                "tipo": "'" + request.form.get('tipo') + "'",
                 "titulo": "'" + request.form.get('titulo') + "'",
-                "vencimento": "'" + str(request.form.get('vencimento')) + "'",
         }
 
         # get all user inputs
@@ -714,8 +717,6 @@ def manutencao():
 
         titulo_localizado = cur.execute(sql)
         titulo_localizado = cur.fetchall()
-
-        session['titulo_localizado'] = titulo_localizado
 
         return render_template('/manutencao.html', cliente=cliente, sacado=sacado, titulo=titulo_localizado)
 

@@ -35,7 +35,8 @@
                             <option value='Quitado'>Quitado</option>
                         </select>
                         <input name='titulo' autofocus class='form-control' placeholder='Título' type='text' title='Relatório por número do título' alt='Relatório por número do título'>
-                        <input name='vencimento' autofocus class='form-control' placeholder='Vencimento' type='date' title='Relatório por vencimento' alt='Relatório por vencimento'>
+                        <input name='vencimento_inicial' autofocus class='form-control' placeholder='Vencimento_Inicial' type='date' title='Relatório por vencimento' alt='Relatório por vencimento' required>
+                        <input name='vencimento_final' autofocus class='form-control' placeholder='Vencimento_Final' type='date' title='Relatório por vencimento' alt='Relatório por vencimento' required>
                 </div>
                 <button type='submit' class='btn btn-sm btn-outline-secondary'>Procurar</button>
                 <button onclick="printDiv('print')" value="print a div" class='btn btn-sm btn-outline-secondary'>Imprimir</button>

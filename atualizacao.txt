@@ -32,3 +32,7 @@
 
 10-03-21
 - inclusão do iof
+
+18-03-21
+- consulta dos relatorios por periodo, vencimento inicial e final
+- correcao banco de dados
